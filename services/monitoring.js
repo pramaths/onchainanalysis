@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 const API_BASE_URL = 'https://services.tokenview.io/vipapi';
-const API_KEY = "synLe1RAw9QvxMEaeovN";
+const API_KEY = "0I96KfBNlfQ9kUjrOUWn";
 
 exports.addAddress = async (req, res) => {
   const { address } = req.body;
