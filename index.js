@@ -11,7 +11,7 @@ const express = require("express");
 // const port = 8000;
 // // const server = http.createServer(app);
 // // const io = socketIo(server);
-// // const EthtransactionRoutes = require("./routes/Ethereum");
+const EthtransactionRoutes = require("./routes/Ethereum");
 // // const BitcointransactionsRouter = require("./routes/Bitcoin");
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: true }));
