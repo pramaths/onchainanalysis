@@ -1,7 +1,6 @@
 const express = require("express");
 const axios = require("axios");
 const { Network, Alchemy } = require("alchemy-sdk");
-const app = express();
 const alchemy = new Alchemy({
 	apiKey: "snS3eJB5XGW05owmtbdnGi6FF04ltCkc",
 	network: Network.ETH_MAINNET,
@@ -15,9 +14,9 @@ sdk.auth(
 
 // Utility function to fetch balance from Etherscan
 const fetchBalanceFromEtherscan = async (address) => {
-	const url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${process.env.ETHERSCAN_API_KEY}`;
+	const url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=HVHTPWF3UJ8P5ZEDNUZYMT28ZZNEEURRD4`;
 	const response = await axios.get(url);
-	return response.data.result; // Returns the balance
+	return response.data.result;
 };
 
 const mals = async (address) => {
@@ -38,7 +37,7 @@ const blnce = async (address) => {
 	var config = {
 		method: "get",
 		maxBodyLength: Infinity,
-		url: "https://services.tokenview.io/vipapi/addr/b/btc/183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM?apikey={apikey}",
+		url: "https://services.tokenview.io/vipapi/addr/b/btc/183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM?apikey=Oxu0AV7QsNfxfix5amPs",
 		headers: {},
 	};
 
@@ -88,9 +87,7 @@ const getCryptoData = async (req, res) => {
 		res.json(combinedData);
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.send("An error occurred while fetching cryptocurrency data.");
+		res.status(500).send("An error occurred while fetching cryptocurrency data.");
 	}
 };
 

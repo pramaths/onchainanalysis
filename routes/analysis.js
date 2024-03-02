@@ -4,6 +4,6 @@ const { getCryptoData } = require("../services/analysis/modal");
 
 const router = express.Router();
 
-router.get("/api/crypto/:address", getCryptoData);
+router.get("/crypto/:address", getCryptoData);
 
 module.exports = router;
