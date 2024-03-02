@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "alchemy": "^0.0.8",
     "alchemy-sdk": "^3.1.2",
     "api": "^6.1.1",
     "axios": "^1.6.7",

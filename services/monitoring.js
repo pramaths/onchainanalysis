@@ -5,7 +5,7 @@ const API_BASE_URL = 'https://services.tokenview.io/vipapi';
 const API_KEY = "synLe1RAw9QvxMEaeovN";
 
 exports.addAddress = async (req, res) => {
-  const { address } = req.params;
+  const { address } = req.body;
   const url = `${API_BASE_URL}/monitor/address/add/eth/${address}?apikey=${API_KEY}`;
 
   try {
@@ -17,13 +17,12 @@ exports.addAddress = async (req, res) => {
 };
 
 exports.listAddresses = async (req, res) => {
-  const page = req.query.page || 5; 
-  const url = `${API_BASE_URL}/monitor/address/list/eth?page=${page}&apikey=${API_KEY}`;
+  const url = `${API_BASE_URL}/monitor/address/list/eth?page=0&apikey=${API_KEY}`;
 
   try {
     const response = await axios.get(url);
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(error.response.status).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 };
