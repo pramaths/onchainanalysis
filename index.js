@@ -1,18 +1,18 @@
 const express = require("express");
-// const bodyParser = require("body-parser");
-// const cookieParser = require("cookie-parser");
-// // const socketIo = require("socket.io");
-// // const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const socketIo = require("socket.io");
+const morgan = require("morgan");
  const cors = require("cors");
-// require("dotenv").config();
+require("dotenv").config();
 
-// // const http = require("http");
+const http = require("http");
  const app = express();
-// const port = 8000;
-// // const server = http.createServer(app);
-// // const io = socketIo(server);
+const port = 8000;
+const server = http.createServer(app);
+const io = socketIo(server);
 const EthtransactionRoutes = require("./routes/Ethereum");
-// // const BitcointransactionsRouter = require("./routes/Bitcoin");
+const BitcointransactionsRouter = require("./routes/Bitcoin");
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(bodyParser.json());
