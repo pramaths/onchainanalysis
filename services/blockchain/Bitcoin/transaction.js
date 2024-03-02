@@ -1,5 +1,41 @@
 const axios = require('axios');
 
+function transformBitcoinTransaction(transaction, address) {
+    let totalSent = 0;
+    let totalReceived = 0;
+
+    transaction.vin.forEach(input => {
+        if (input.prevout && input.prevout.scriptpubkey_address === address) {
+            totalSent += input.prevout.value;
+        }
+    });
+    let changeReturned = 0;
+    transaction.vout.forEach(output => {
+        if (output.scriptpubkey_address === address) {
+            totalReceived += output.value;
+        }
+        if (output.scriptpubkey_address === address && transaction.vin.some(input => input.prevout.scriptpubkey_address === address)) {
+            changeReturned += output.value;
+        }
+    });
+
+    const actualSent = totalSent - changeReturned;
+    const netValue = totalReceived - actualSent - transaction.fee;
+
+    return {
+        txid: transaction.txid,
+        from_address: address,
+        to_address: address, // This is oversimplified, as Bitcoin transactions can have multiple recipients
+        value: netValue,
+        fee: transaction.fee,
+        confirmed: transaction.status.confirmed,
+        block_height: transaction.status.block_height,
+        block_hash: transaction.status.block_hash,
+        block_time: transaction.status.block_time,
+    };
+}
+
+
 async function fetchTransactions(address, lastSeenTxId = null) {
     let allTransactions = [];
     try {
@@ -33,8 +69,8 @@ async function getAllTransactionsController(req, res) {
         if (transactions === 'error') {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
-
-        res.status(200).json({ Bitcoin:transactions });
+        const transformedTransactions = transactions.map(tx => transformBitcoinTransaction(tx, address));
+        res.status(200).json({ result:transformedTransactions });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
