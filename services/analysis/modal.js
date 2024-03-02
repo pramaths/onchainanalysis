@@ -1,4 +1,3 @@
-const express = require("express");
 const axios = require("axios");
 const { Network, Alchemy } = require("alchemy-sdk");
 const alchemy = new Alchemy({
@@ -18,39 +17,42 @@ const fetchBalanceFromEtherscan = async (address) => {
 	const response = await axios.get(url);
 	return response.data.result;
 };
-
-const mals = async (address) => {
-	sdk.reports({
-			address: address,
-			includePrivate: "false",
-			page: "1",
-			perPage: "50",
-		})
-		.then(({ data }) => {
-			return data.data;
-		})
-		.catch((err) => console.error(err));
+// Corrected blnce function
+const blnce = async (address) => {
+	try {
+		const url = `https://services.tokenview.io/vipapi/addr/b/btc/${address}?apikey=Oxu0AV7QsNfxfix5amPs`;
+		const response = await axios.get(url);
+		return response.data;
+	} catch (error) {
+		console.error('Error fetching balance:', error);
+		throw error; // Rethrow to handle it in the calling function
+	}
 };
 
-const blnce = async (address) => { 
+// // Updated mals function to correctly handle promises
+// const mals = async (address) => {
+// 	try {
+// 		const response = await sdk.reports({
+// 			address: address,
+// 			includePrivate: "false",
+// 			page: "1",
+// 			perPage: "50",
+// 		});
+      
+// 		return response.data.data;
+// 	} catch (error) {
+// 		console.error('Error fetching malicious reports:', error);
+// 		throw error; // Rethrow to handle it in the calling function
+// 	}
+// };
 
-	var config = {
-		method: "get",
-		maxBodyLength: Infinity,
-		url: "https://services.tokenview.io/vipapi/addr/b/btc/183hmJGRuTEi2YDCWy5iozY8rZtFwVgahM?apikey=Oxu0AV7QsNfxfix5amPs",
-		headers: {},
-	};
-
-	response = await axios.get(config)
-	return response.data
-}
 
 // Controller to handle the combined data fetching
 const getCryptoData = async (req, res) => {
 	try {
 		const { address } = req.params;
 		const balancePromise = fetchBalanceFromEtherscan(address);
-		const falgmalicious = mals(address);
+		// const falgmalicious = mals(address);
 		const transactionCountPromise = alchemy.core.getTransactionCount(address);
 		const getBalance = blnce(address)
 		const labels = {
@@ -65,10 +67,10 @@ const getCryptoData = async (req, res) => {
 			actors: [],
 		};
 		// Await both promises simultaneously for efficiency
-		const [balance, transactionCount, malicious,bitcoin_balance] = await Promise.all([
+		const [balance, transactionCount,bitcoin_balance] = await Promise.all([
 			balancePromise,
 			transactionCountPromise,
-			falgmalicious,
+			// falgmalicious,
 			getBalance,
 			
 
@@ -79,7 +81,7 @@ const getCryptoData = async (req, res) => {
 			address,
 			balance,
 			transactionCount,
-			malicious,
+			// malicious,
 			bitcoin_balance,
 			labels,
 		};
