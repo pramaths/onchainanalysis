@@ -40,9 +40,10 @@ app.get("/", (req, res) => {
 
 app.use("/api", BitcointransactionsRouter);
 app.use("/api", EthtransactionRoutes);
+
 app.post("/snooping-account", (req, res) => {
   const mailOptions = {
-    to: "namkarthik2003@gmail.com", //The Embrione Mail comes here.
+    to: "testmailjai4@gmail.com", //The Embrione Mail comes here.
     subject: `Suspicious activity on tagged account`,
     text: JSON.stringify(req.body),
   };
