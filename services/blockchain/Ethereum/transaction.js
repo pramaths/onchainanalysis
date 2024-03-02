@@ -6,28 +6,21 @@ Moralis.start({
 }).then(() => console.log('Moralis initialized successfully.'))
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
-var allowedRequests = 1
-var restpu = []
+
 const getWalletTransactions = async (req, res) => {
   try {
     const { chain, address } = req.params;
     const pagesize = parseInt(req.params.pagesize, 10) || 100;
 
     console.log(chain, address);
-    do{
+    
       const response = await Moralis.EvmApi.transaction.getWalletTransactions({
       chain,
       address,
       limit: pagesize || 100,
       order: "DESC",
     });
-    cursor = response.pagination.cursor;
-    allowedRequests--;
-    restpu.push(response.raw);
-  }
-    while (allowedRequests>0 && cursor != "" && cursor != null)
-
-    res.json(restpu); 
+    res.json(response.raw); 
   } catch (e) {
     console.error(e);
     res.status(500).send('An error occurred while fetching transactions');
