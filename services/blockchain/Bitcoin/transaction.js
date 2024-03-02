@@ -14,8 +14,10 @@ function transformBitcoinTransaction(transaction, address) {
     outflow = []
     let changeReturned = 0;
     transaction.vout.forEach(output => {
-        if (output.scriptpubkey_address != address && transaction.vin.some(input => input.prevout.scriptpubkey_address != address)) {
-            console.log(output.scriptpubkey_address);
+        if (output.scriptpubkey_address === address) {
+            totalReceived += output.value;
+        }
+        if (output.scriptpubkey_address === address && transaction.vin.some(input => input.prevout.scriptpubkey_address === address)) {
             changeReturned += output.value;
             outflow.push({ to_address: output.scriptpubkey_address, from_address:address, value: output.value })
         }

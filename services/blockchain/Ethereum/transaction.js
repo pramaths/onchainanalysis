@@ -19,7 +19,6 @@ const getWalletTransactions = async (req, res) => {
       address,
       limit: pagesize || 100,
       order: "DESC",
-      cursor: cursor
     });
     cursor = response.pagination.cursor;
     allowedRequests--;
