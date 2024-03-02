@@ -16,8 +16,8 @@ const getWalletTransactions = async (req, res) => {
     const response = await Moralis.EvmApi.transaction.getWalletTransactions({
       chain,
       address,
-      limit: pagesize || 100,
-      order: "DESC",
+      limit: pagesize || 300,
+      order: "ASC",
     });
 
     res.json(response.raw); 

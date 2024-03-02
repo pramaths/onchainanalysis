@@ -5,16 +5,16 @@ function transformBitcoinTransaction(transaction, address) {
     let totalReceived = 0;
 
     transaction.vin.forEach(input => {
-        if (input.prevout && input.prevout.scriptpubkey_address === address) {
+        if (input.prevout && input.prevout.scriptpubkey_address != address) {
             totalSent += input.prevout.value;
         }
     });
     let changeReturned = 0;
     transaction.vout.forEach(output => {
-        if (output.scriptpubkey_address === address) {
+        if (output.scriptpubkey_address != address) {
             totalReceived += output.value;
         }
-        if (output.scriptpubkey_address === address && transaction.vin.some(input => input.prevout.scriptpubkey_address === address)) {
+        if (output.scriptpubkey_address != address && transaction.vin.some(input => input.prevout.scriptpubkey_address != address)) {
             changeReturned += output.value;
         }
     });
