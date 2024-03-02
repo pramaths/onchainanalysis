@@ -1,3 +1,4 @@
+const { response } = require('express');
 
 const Moralis = require('moralis').default;
 Moralis.start({
@@ -6,7 +7,7 @@ Moralis.start({
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
 var allowedRequests = 3
-var restpu = ""
+var restpu = []
 const getWalletTransactions = async (req, res) => {
   try {
     const { chain, address } = req.params;
@@ -22,11 +23,11 @@ const getWalletTransactions = async (req, res) => {
     });
     cursor = response.pagination.cursor;
     allowedRequests--;
-    respu += JSON.stringify(response)
+    restpu.push(response.raw);
   }
-    while (cursor != "" && cursor != null)
+    while (allowedRequests>0 && cursor != "" && cursor != null)
 
-    res.json(respu); 
+    res.json(restpu); 
   } catch (e) {
     console.error(e);
     res.status(500).send('An error occurred while fetching transactions');
