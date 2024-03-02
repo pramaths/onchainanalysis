@@ -34,7 +34,7 @@ async function getAllTransactionsController(req, res) {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
 
-        res.status(200).json({ transactions });
+        res.status(200).json({ Bitcoin:transactions });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
