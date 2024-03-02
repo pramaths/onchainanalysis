@@ -6,7 +6,7 @@ Moralis.start({
 }).then(() => console.log('Moralis initialized successfully.'))
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
-var allowedRequests = 3
+var allowedRequests = 1
 var restpu = []
 const getWalletTransactions = async (req, res) => {
   try {
