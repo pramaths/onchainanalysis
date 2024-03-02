@@ -5,7 +5,7 @@ Moralis.start({
 }).then(() => console.log('Moralis initialized successfully.'))
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
-  
+
 const getWalletTransactions = async (req, res) => {
   try {
     const { chain, address } = req.params; 
