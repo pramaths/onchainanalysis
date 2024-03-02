@@ -9,11 +9,13 @@ Moralis.start({
 const getWalletTransactions = async (req, res) => {
   try {
     const { chain, address } = req.params; 
+    const pagesize = parseInt(req.params.pagesize, 10) || 100;
+
     console.log(chain, address);
     const response = await Moralis.EvmApi.transaction.getWalletTransactions({
       chain,
       address,
-      limit: 100,
+      limit: pagesize || 100,
       order: "DESC",
     });
 

@@ -30,8 +30,6 @@ async function getAllTransactionsController(req, res) {
     try {
         const address = req.params.address;
         const transactions = await fetchTransactions(address);
-        
-        // Check if an error occurred during the recursive fetching
         if (transactions === 'error') {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
