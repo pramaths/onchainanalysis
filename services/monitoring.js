@@ -17,7 +17,7 @@ exports.addAddress = async (req, res) => {
 };
 
 exports.listAddresses = async (req, res) => {
-  const page = req.query.page || 1; // Default to page 1 if not specified
+  const page = req.query.page || 5; 
   const url = `${API_BASE_URL}/monitor/address/list/eth?page=${page}&apikey=${API_KEY}`;
 
   try {

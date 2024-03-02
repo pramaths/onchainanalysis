@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const socketIo = require("socket.io");
 const morgan = require("morgan");
+const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -42,6 +43,7 @@ app.get("/", (req, res) => {
 app.use("/api", BitcointransactionsRouter);
 app.use("/api", EthtransactionRoutes);
 app.use("/api",analysis)
+app.use("/api",monitor)
 app.post("/snooping-account", (req, res) => {
   const mailOptions = {
     to: "testmailjai4@gmail.com", //The Embrione Mail comes here.
@@ -50,7 +52,6 @@ app.post("/snooping-account", (req, res) => {
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
-    // this is to bypass all the mails via the embrione tech mail as well
     if (error) {
       console.log(error);
       res.status(200).json({
