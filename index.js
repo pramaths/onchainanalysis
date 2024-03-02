@@ -16,7 +16,7 @@ const BitcointransactionsRouter = require("./routes/Bitcoin");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 // // app.use(morgan("dev"));
 
 app.use((err, req, res, next) => {

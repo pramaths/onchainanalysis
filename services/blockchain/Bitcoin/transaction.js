@@ -14,14 +14,11 @@ async function fetchTransactions(address, res, lastSeenTxId = null) {
         const chunkTransactions = response.data || [];
         allTransactions = allTransactions.concat(chunkTransactions);
         res.write(JSON.stringify(chunkTransactions));
-
-        // Check if there are more transactions to fetch
         const lastTxId = chunkTransactions.length > 0 ? chunkTransactions[chunkTransactions.length - 1].txid : null;
         if (lastTxId && lastTxId !== lastSeenTxId) {
             // Recursively fetch more transactions
             await fetchTransactions(address, res, lastTxId);
         } else {
-            // If no more transactions, end the response
             res.end();
         }
     } catch (error) {
