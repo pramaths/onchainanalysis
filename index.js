@@ -24,6 +24,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 const EthtransactionRoutes = require("./routes/Ethereum");
 const BitcointransactionsRouter = require("./routes/Bitcoin");
+const analysis = require("./routes/analysis");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -40,7 +41,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", BitcointransactionsRouter);
 app.use("/api", EthtransactionRoutes);
-
+app.use("/api",analysis)
 app.post("/snooping-account", (req, res) => {
   const mailOptions = {
     to: "testmailjai4@gmail.com", //The Embrione Mail comes here.

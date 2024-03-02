@@ -2,7 +2,7 @@ const { response } = require('express');
 
 const Moralis = require('moralis').default;
 Moralis.start({
-  apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjIwYjI0YTZmLWM2ZTAtNDNhMi1iZDRjLWZkMzg3OTg0NjBhZCIsIm9yZ0lkIjoiMzgwODc2IiwidXNlcklkIjoiMzkxMzY1IiwidHlwZUlkIjoiZTI5YjE3OTYtYjY1Ny00MjBlLTlmYWYtNmIxMTRlMWNkZTVkIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDkzNzcxMDgsImV4cCI6NDg2NTEzNzEwOH0.8Ls8RNcqOgBDtrULE_Ta8Itq29FKD-Nt1H5GihK6gWM'
+  apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImEzZTA5ZDgyLTU3YjEtNGZlMy04MjY3LTk3NWI1MjZmOWJmZCIsIm9yZ0lkIjoiMjYxNjMzIiwidXNlcklkIjoiMjY1ODk2IiwidHlwZUlkIjoiMjU5MTRlZGYtNDdjMy00Y2ZhLWI1NjktMGMzNDg3ZWQ1NTI3IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDYxODExOTIsImV4cCI6NDg2MTk0MTE5Mn0._EvFooXZJKB4aRbKXf_W6-VJJv9S_IaYBZUZOyC0Jtg'
 }).then(() => console.log('Moralis initialized successfully.'))
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
