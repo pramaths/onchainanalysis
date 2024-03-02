@@ -26,6 +26,10 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
+app.get('/', (req, res) => {
+    res.status(200).send('Welcome to the Crypto Tracker API');
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
