@@ -5,7 +5,7 @@ const API_BASE_URL = 'https://services.tokenview.io/vipapi';
 const API_KEY = "synLe1RAw9QvxMEaeovN";
 
 exports.addAddress = async (req, res) => {
-  const { address } = req.params;
+  const { address } = req.body;
   const url = `${API_BASE_URL}/monitor/address/add/eth/${address}?apikey=${API_KEY}`;
 
   try {
