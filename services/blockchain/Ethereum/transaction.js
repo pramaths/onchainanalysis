@@ -6,7 +6,6 @@ Moralis.start({
 }).then(() => console.log('Moralis initialized successfully.'))
   .catch((error) => console.error('Failed to initialize Moralis:', error));
 
-
 const getWalletTransactions = async (req, res) => {
   try {
     const { chain, address } = req.params;
@@ -26,5 +25,30 @@ const getWalletTransactions = async (req, res) => {
     res.status(500).send('An error occurred while fetching transactions');
   }
 };
+const getTransactionDetails = async (req, res) => {
+  try {
+    // await initializeMoralis(); // Ensure Moralis is initialized
 
-module.exports = { getWalletTransactions };
+    const { hash } = req.params;
+    console.log(hash)
+    if (!hash) {
+      return res.status(400).send({ error: 'Transaction hash is required' });
+    }
+
+    const response = await Moralis.EvmApi.transaction.getTransaction({
+      chain: "0x1",
+      transactionHash: hash
+    });
+console.log(response)
+    if (response.raw) {
+      res.json(response.raw);
+    } else {
+      res.status(404).send({ error: 'Transaction not found' });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).send({ error: 'An error occurred while fetching transaction details' });
+  }
+};
+
+module.exports = { getWalletTransactions,getTransactionDetails };
