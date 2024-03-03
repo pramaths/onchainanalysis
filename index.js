@@ -68,6 +68,38 @@ app.post("/snooping-account", (req, res) => {
   });
 });
 
+async function initializeMoralis() {
+  await Moralis.start({
+    apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImEzZTA5ZDgyLTU3YjEtNGZlMy04MjY3LTk3NWI1MjZmOWJmZCIsIm9yZ0lkIjoiMjYxNjMzIiwidXNlcklkIjoiMjY1ODk2IiwidHlwZUlkIjoiMjU5MTRlZGYtNDdjMy00Y2ZhLWI1NjktMGMzNDg3ZWQ1NTI3IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDYxODExOTIsImV4cCI6NDg2MTk0MTE5Mn0._EvFooXZJKB4aRbKXf_W6-VJJv9S_IaYBZUZOyC0Jtg"
+  });
+  console.log('Moralis initialized successfully.');
+}
+
+initializeMoralis().catch(console.error);
+app.get('/transaction/:hash', async (req, res) => {
+  try {
+    const { hash } = req.params;
+    
+    if (!hash) {
+      return res.status(400).send({ error: 'Transaction hash is required' });
+    }
+
+    const response = await Moralis.EvmApi.transaction.getTransaction({
+      chain: "0x1", // Use the chain ID for Ethereum mainnet; adjust as needed
+      transactionHash: hash
+    });
+
+    if (response.raw) {
+      res.json(response.raw);
+    } else {
+      res.status(404).send({ error: 'Transaction not found' });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).send({ error: 'An error occurred while fetching transaction details' });
+  }
+});
 app.listen(8000, () => {
   console.log(`Server is running on port`);
 });
+
