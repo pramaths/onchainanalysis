@@ -6,8 +6,9 @@ const API_KEY = "0I96KfBNlfQ9kUjrOUWn";
 
 exports.addAddress = async (req, res) => {
   const { address } = req.body;
+  console.log(address)
   const url = `${API_BASE_URL}/monitor/address/add/eth/${address}?apikey=${API_KEY}`;
-
+console.log(url)
   try {
     const response = await axios.post(url);
     res.status(200).json(response.data);

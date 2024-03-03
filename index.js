@@ -6,6 +6,12 @@ const morgan = require("morgan");
 const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
+const { Alchemy, Network } = require("alchemy-sdk");
+const config = {
+  apiKey: "gvGFt1jOABt1tDSCwPNqli0Ssrie7BAe", 
+  network: Network.ETH_MAINNET, // Replace with your network
+};
+const alchemy = new Alchemy(config);
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -77,29 +83,23 @@ app.post("/snooping-account", (req, res) => {
 // }
 
 // initializeMoralis().catch(console.error);
-app.get('/api/transaction/:hash', async (req, res) => {
-  try {
-    const { hash } = req.params;
-    
-    if (!hash) {
-      return res.status(400).send({ error: 'Transaction hash is required' });
-    }
 
-    const response = await Moralis.EvmApi.transaction.getTransaction({
-      chain: "0x1", // Use the chain ID for Ethereum mainnet; adjust as needed
-      transactionHash: hash
+app.get("/trx/:hash", (req, res) => {
+  const { hash } = req.params;
+  alchemy.core.getTransaction(hash)
+    .then(transaction => {
+      if (transaction) {
+        res.json(transaction); 
+      } else {
+        res.status(404).send({ error: 'Transaction not found' });
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send({ error: 'An error occurred while fetching transaction details' });
     });
-
-    if (response.raw) {
-      res.json(response.raw);
-    } else {
-      res.status(404).send({ error: 'Transaction not found' });
-    }
-  } catch (e) {
-    console.error(e);
-    res.status(500).send({ error: 'An error occurred while fetching transaction details' });
-  }
 });
+
 app.listen(8000, () => {
   console.log(`Server is running on port`);
 });
