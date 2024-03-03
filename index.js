@@ -5,6 +5,7 @@ const socketIo = require("socket.io");
 const morgan = require("morgan");
 const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
+const Moralis = require('moralis').default;
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -68,15 +69,15 @@ app.post("/snooping-account", (req, res) => {
   });
 });
 
-async function initializeMoralis() {
-  await Moralis.start({
-    apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImEzZTA5ZDgyLTU3YjEtNGZlMy04MjY3LTk3NWI1MjZmOWJmZCIsIm9yZ0lkIjoiMjYxNjMzIiwidXNlcklkIjoiMjY1ODk2IiwidHlwZUlkIjoiMjU5MTRlZGYtNDdjMy00Y2ZhLWI1NjktMGMzNDg3ZWQ1NTI3IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDYxODExOTIsImV4cCI6NDg2MTk0MTE5Mn0._EvFooXZJKB4aRbKXf_W6-VJJv9S_IaYBZUZOyC0Jtg"
-  });
-  console.log('Moralis initialized successfully.');
-}
+// async function initializeMoralis() {
+//   await Moralis.start({
+//     apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImEzZTA5ZDgyLTU3YjEtNGZlMy04MjY3LTk3NWI1MjZmOWJmZCIsIm9yZ0lkIjoiMjYxNjMzIiwidXNlcklkIjoiMjY1ODk2IiwidHlwZUlkIjoiMjU5MTRlZGYtNDdjMy00Y2ZhLWI1NjktMGMzNDg3ZWQ1NTI3IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDYxODExOTIsImV4cCI6NDg2MTk0MTE5Mn0._EvFooXZJKB4aRbKXf_W6-VJJv9S_IaYBZUZOyC0Jtg"
+//   });
+//   console.log('Moralis initialized successfully.');
+// }
 
-initializeMoralis().catch(console.error);
-app.get('/transaction/:hash', async (req, res) => {
+// initializeMoralis().catch(console.error);
+app.get('/api/transaction/:hash', async (req, res) => {
   try {
     const { hash } = req.params;
     
