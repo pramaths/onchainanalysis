@@ -52,7 +52,32 @@ const mals = async (address) => {
 	// fetch(address)
 	// .then((res))
 };
+const labeldetails = async (address) => { 
+	const url = "https://api.ikna.io/search";
 
+	// Define the request headers
+	const headers = {
+		accept: "application/json",
+		Authorization: "q/FOHoQPs/wBEcw8flBa1cWRyfEj+UR1",
+	};
+
+	// Define the request parameters
+	const params = {
+		currency: "eth",
+		q: address,
+		limit: 10,
+	};
+
+	// Make the GET request using Axios
+	axios
+		.get(url, { params, headers })
+		.then((response) => {
+			return(response.labels);
+		})
+		.catch((error) => {
+			throw error
+		});
+}
 const toks = async (address) => { 
 
 	var config = {
@@ -81,17 +106,7 @@ const getCryptoData = async (req, res) => {
 		const transactionCountPromise = alchemy.core.getTransactionCount(address);
 		const getBalance = blnce(address)
 		const erctokens = toks(address)
-		const labels = {
-			currencies: [
-				{
-					currency: "btc",
-					addresses: ["33TbzA5AMiTKUCmeVEdsnTj3GiVXuavCAH"],
-					txs: [],
-				},
-			],
-			labels: [],
-			actors: [],
-		};
+		const labels = labeldetails(address);
 		// Await both promises simultaneously for efficiency
 		const [balance, transactionCount, malicious, bitcoin_balance,erctoks] =
 			await Promise.all([
