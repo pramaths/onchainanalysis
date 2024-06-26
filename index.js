@@ -6,12 +6,13 @@ const morgan = require("morgan");
 const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
-const { Alchemy, Network } = require("alchemy-sdk");
-const config = {
-  apiKey: "gvGFt1jOABt1tDSCwPNqli0Ssrie7BAe", 
-  network: Network.ETH_MAINNET, // Replace with your network
-};
-const alchemy = new Alchemy(config);
+// const { Alchemy, Network } = require("alchemy-sdk");
+// const config = {
+//   apiKey: "gvGFt1jOABt1tDSCwPNqli0Ssrie7BAe", 
+//   network: Network.ETH_MAINNET, // Replace with your network
+// };
+// const alchemy = new Alchemy(config);
+const { initAPI, fetchTransaction } = require("./utils/keyRotation");
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -84,23 +85,30 @@ app.post("/snooping-account", (req, res) => {
 
 // initializeMoralis().catch(console.error);
 
+// app.get("/trx/:hash", (req, res) => {
+//   const { hash } = req.params;
+//   alchemy.core.getTransaction(hash)
+//     .then(transaction => {
+//       if (transaction) {
+//         res.json(transaction); 
+//       } else {
+//         res.status(404).send({ error: 'Transaction not found' });
+//       }
+//     })
+//     .catch(error => {
+//       console.error(error);
+//       res.status(500).send({ error: 'An error occurred while fetching transaction details' });
+//     });
+// });
+
 app.get("/trx/:hash", (req, res) => {
   const { hash } = req.params;
-  alchemy.core.getTransaction(hash)
-    .then(transaction => {
-      if (transaction) {
-        res.json(transaction); 
-      } else {
-        res.status(404).send({ error: 'Transaction not found' });
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      res.status(500).send({ error: 'An error occurred while fetching transaction details' });
-    });
+  const alchemyInstance = initAPI();
+  
+  fetchTransaction(hash, alchemyInstance, res);
 });
 
 app.listen(8000, () => {
-  console.log(`Server is running on port`);
+  console.log(`Server is running on port 8000`);
 });
 
