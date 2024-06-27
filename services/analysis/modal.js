@@ -18,8 +18,6 @@ const tokens = async (address) => {
 	return response.data.result;
 }
 
-
-
 const getCryptoData = async (req, res) => {
 	try {
 		const { address } = req.params;

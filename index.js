@@ -1,70 +1,83 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const socketIo = require("socket.io");
 const morgan = require("morgan");
-const monitor=require("./routes/monitor")
+const monitor = require("./routes/monitor");
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
 const session = require('express-session');
+let RedisStore = require('connect-redis').default;
 const redisClient = require('./utils/redis');
-
-const { initAPI, fetchTransaction } = require("./utils/keyRotation");
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: "testaccout33@gmail.com",
-    pass: "rexmriznhrrkegcc",
-  },
-});
-
 const cors = require("cors");
+const http = require("http");
+const compression = require("compression");
+const helmet = require("helmet");
 require("dotenv").config();
 
-const http = require("http");
+const { initAPI, fetchTransaction } = require("./utils/keyRotation");
+
 const app = express();
 
+// Security and performance middleware
+app.use(helmet());
+app.use(compression());
+
+// Session configuration with Redis
 app.use(
   session({
-    store: new (require('connect-redis')(session))({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || '1234', // Replace with a secure secret
+    store: new RedisStore({
       client: redisClient,
     }),
     secret: '1234', // Replace with a secure secret
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }, // Set to true for HTTPS
+    cookie: { secure: process.env.NODE_ENV === 'production' }, // Set to true for HTTPS in production
   })
 );
 
-const port = 8000;
-const server = http.createServer(app);
-const io = socketIo(server);
-const EthtransactionRoutes = require("./routes/Ethereum");
-const BitcointransactionsRouter = require("./routes/Bitcoin");
-const analysis = require("./routes/analysis");
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
+
+// Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Routes
+const EthtransactionRoutes = require("./routes/Ethereum");
+const BitcointransactionsRouter = require("./routes/Bitcoin");
+const analysis = require("./routes/analysis");
+
+app.use("/api", BitcointransactionsRouter);
+app.use("/api", EthtransactionRoutes);
+app.use("/api", analysis);
+app.use("/api", monitor);
+
 app.get("/", (req, res) => {
   res.status(200).send("Welcome to the Crypto Tracker API");
 });
 
-app.use("/api", BitcointransactionsRouter);
-app.use("/api", EthtransactionRoutes);
-app.use("/api",analysis)
-app.use("/api",monitor)
 app.post("/snooping-account", (req, res) => {
   const mailOptions = {
-    to: "testmailjai4@gmail.com", //The Embrione Mail comes here.
+    to: "testmailjai4@gmail.com",
     subject: `Suspicious activity on tagged account`,
     text: JSON.stringify(req.body),
   };
@@ -76,13 +89,11 @@ app.post("/snooping-account", (req, res) => {
         message: JSON.stringify(error.message),
       });
     } else {
-      // console.log("Email sent: " + info.response + Date.now());
       console.log("Mail Sent Successfully!");
       res.status(200).json({
-        message: "Success! Message Sent! ",
+        message: "Success! Message Sent!",
       });
     }
-    // res.json({name: 'This is the backendddd'})
   });
 });
 
@@ -93,7 +104,28 @@ app.get("/trx/:hash", (req, res) => {
   fetchTransaction(hash, alchemyInstance, res);
 });
 
-app.listen(8000, () => {
-  console.log(`Server is running on port 8000`);
+// Server-Sent Events (SSE) for real-time updates
+app.get("/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const sendEvent = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  // Example: sending a message every 10 seconds
+  const intervalId = setInterval(() => {
+    sendEvent({ message: "Hello from SSE" });
+  }, 10000);
+
+  req.on("close", () => {
+    clearInterval(intervalId);
+  });
 });
 
+// Start the server
+const port = process.env.PORT || 8000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
