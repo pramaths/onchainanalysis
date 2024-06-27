@@ -6,7 +6,7 @@ const monitor = require("./routes/monitor");
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
 const session = require('express-session');
-const RedisStore = require('connect-redis').default;
+let RedisStore = require('connect-redis').default;
 const redisClient = require('./utils/redis');
 const cors = require("cors");
 const http = require("http");
@@ -27,6 +27,10 @@ app.use(
   session({
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || '1234', // Replace with a secure secret
+    store: new RedisStore({
+      client: redisClient,
+    }),
+    secret: '1234', // Replace with a secure secret
     resave: false,
     saveUninitialized: true,
     cookie: { secure: process.env.NODE_ENV === 'production' }, // Set to true for HTTPS in production
