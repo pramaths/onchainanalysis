@@ -7,6 +7,7 @@ const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
 const session = require('express-session');
+let RedisStore = require('connect-redis').default;
 const redisClient = require('./utils/redis');
 
 const { initAPI, fetchTransaction } = require("./utils/keyRotation");
@@ -28,7 +29,7 @@ const app = express();
 
 app.use(
   session({
-    store: new (require('connect-redis')(session))({
+    store: new RedisStore({
       client: redisClient,
     }),
     secret: '1234', // Replace with a secure secret
