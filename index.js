@@ -6,12 +6,9 @@ const morgan = require("morgan");
 const monitor=require("./routes/monitor")
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
-// const { Alchemy, Network } = require("alchemy-sdk");
-// const config = {
-//   apiKey: "gvGFt1jOABt1tDSCwPNqli0Ssrie7BAe", 
-//   network: Network.ETH_MAINNET, // Replace with your network
-// };
-// const alchemy = new Alchemy(config);
+const session = require('express-session');
+const redisClient = require('./utils/redis');
+
 const { initAPI, fetchTransaction } = require("./utils/keyRotation");
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -28,6 +25,19 @@ require("dotenv").config();
 
 const http = require("http");
 const app = express();
+
+app.use(
+  session({
+    store: new (require('connect-redis')(session))({
+      client: redisClient,
+    }),
+    secret: '1234', // Replace with a secure secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }, // Set to true for HTTPS
+  })
+);
+
 const port = 8000;
 const server = http.createServer(app);
 const io = socketIo(server);
