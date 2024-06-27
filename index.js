@@ -23,19 +23,19 @@ app.use(helmet());
 app.use(compression());
 
 // Session configuration with Redis
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET || '1234', // Replace with a secure secret
-    store: new RedisStore({
-      client: redisClient,
-    }),
-    secret: '1234', // Replace with a secure secret
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' }, // Set to true for HTTPS in production
-  })
-);
+// app.use(
+//   session({
+//     store: new RedisStore({ client: redisClient }),
+//     secret: process.env.SESSION_SECRET || '1234', // Replace with a secure secret
+//     store: new RedisStore({
+//       client: redisClient,
+//     }),
+//     secret: '1234', // Replace with a secure secret
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: process.env.NODE_ENV === 'production' }, // Set to true for HTTPS in production
+//   })
+// );
 
 // Middleware setup
 app.use(cors());

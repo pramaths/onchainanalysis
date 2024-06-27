@@ -9,28 +9,28 @@ Moralis.start({
 
 const getWalletTransactions = async (req, res) => {
   try {
-    const cachedData = await redisClient.get("cachedData");
-    if (!cachedData) {
+    // const cachedData = await redisClient.get("cachedData");
+    // if (!cachedData) {
       const { chain, address } = req.params;
-      const pagesize = parseInt(req.params.pagesize, 10) || 2;
+      const pagesize = parseInt(req.params.pagesize, 10) || 100;
 
       console.log(chain, address);
 
       const response = await Moralis.EvmApi.transaction.getWalletTransactions({
         chain,
         address,
-        limit: pagesize || 2,
+        limit: pagesize || 100,
         order: "DESC",
       });
       
-      console.log("Data retrieved from API ->", JSON.parse(response.raw.result.length));
-      await redisClient.set("cachedData", JSON.stringify(response.raw));
-      console.log("Caching in Redis...")
+      // console.log("Data retrieved from API ->", JSON.parse(response.raw.result.length));
+      // await redisClient.set("cachedData", JSON.stringify(response.raw));
+      // console.log("Caching in Redis...")
       res.json(response.raw);
-    } else {
-      console.log("Data retrieved from Redis cache ->", JSON.parse(cachedData).result.length);
-      res.json(JSON.parse(cachedData));
-    }
+    // } else {
+    //   console.log("Data retrieved from Redis cache ->", JSON.parse(cachedData).result.length);
+    //   res.json(JSON.parse(cachedData));
+    // }
   } catch (e) {
     console.error(e);
     res.status(500).send("An error occurred while fetching transactions");
