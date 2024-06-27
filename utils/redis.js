@@ -1,11 +1,29 @@
-// redis.js
-const redis = require('redis');
-const client = redis.createClient();
+const redis = require("redis");
 
-client.on('error', (err) => {
+const client = redis.createClient({
+  socket: {
+    host: process.env.REDIS_HOST || "",
+    port: process.env.REDIS_PORT || 6379,
+    reconnectStrategy: (retries) => {
+      if (retries >= 10) {
+        return new Error('Retry limit reached');
+      }
+      return Math.min(retries * 50, 500);
+    },
+  },
+});
+
+client.on("error", (err) => {
   console.log(`Redis Error: ${err}`);
 });
 
-module.exports = client;
+(async () => {
+  try {
+    await client.connect();
+    console.log("Connected to Redis");
+  } catch (err) {
+    console.error(`Failed to connect to Redis: ${err}`);
+  }
+})();
 
-client.connect();
+module.exports = client;
