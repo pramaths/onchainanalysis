@@ -1,69 +1,53 @@
 const axios = require("axios");
 
-// function transformBitcoinTransaction(transaction, address) {
-//     let totalSent = 0;
-//     let totalReceived = 0;
-//     inflow = []
-//     console.log(transaction.txid);
-//     transaction.vin.forEach(input => {
-//         if (input.prevout && input.prevout.scriptpubkey_address != address) {
-//             totalSent += input.prevout.value;
-//             inflow.push({from_address :input.prevout.scriptpubkey_address,to_address:address, value: input.prevout.value});
-//         }
-//     });
-//     outflow = []
-//     let changeReturned = 0;
-//     transaction.vout.forEach(output => {
-//         if (output.scriptpubkey_address === address) {
-//             totalReceived += output.value;
-//         }
-//         if (output.scriptpubkey_address === address && transaction.vin.some(input => input.prevout.scriptpubkey_address === address)) {
-//             changeReturned += output.value;
-//             outflow.push({ to_address: output.scriptpubkey_address, from_address:address, value: output.value })
-//         }
-//     });
-
-//     const actualSent = totalSent - changeReturned;
-//     const netValue = totalReceived - actualSent - transaction.fee;
-
-//     return {
-//         txid: transaction.txid,
-//         inflow: inflow,
-//         outflow:outflow,
-//         // confirmed: transaction.status.confirmed,
-//         // block_height: transaction.status.block_height,
-//         // block_hash: transaction.status.block_hash,
-//         block_time: transaction.status.block_time,
-//     };
-// }
-
 function transformBitcoinTransaction(transaction, address) {
   const transactions = [];
 
-  transaction.vin.forEach((input) => {
-    if (input.prevout && input.prevout.scriptpubkey_address !== address) {
+  if (!transaction.vin) {
+    if (transaction.prevout.scriptpubkey_address !== address) {
+      console.log("No vin found in transaction:", transaction.txid);
       const tx = {
         block_hash: transaction.block_hash || "",
         block_number: transaction.block_no || "",
         block_timestamp: transaction.block_timestamp
           ? new Date(transaction.block_timestamp).toISOString()
           : "",
-        from_address: input.prevout.scriptpubkey_address,
+        from_address: transaction.prevout.scriptpubkey_address,
         to_address: address,
-        value: input.prevout.value,
-        txid: transaction.txid,
-        block_time: transaction.status.block_time,
+        value: transaction.vout[0].value || "",
+        txid: transaction.txid || "",
+        block_time: transaction.status.block_time || "",
       };
+      console.log("+++", tx);
       transactions.push(tx);
     }
-  });
+  }
+  if (transaction.vin && transaction.vin.length > 0) {
+    transaction.vin.forEach((input) => {
+      if (input.prevout && input.prevout.scriptpubkey_address !== address) {
+        const tx = {
+          block_hash: transaction.block_hash || "",
+          block_number: transaction.block_no || "",
+          block_timestamp: transaction.block_timestamp
+            ? new Date(transaction.block_timestamp).toISOString()
+            : "",
+          from_address: input.prevout.scriptpubkey_address,
+          to_address: address,
+          value: input.prevout.value || "",
+          txid: transaction.txid || "",
+          block_time: transaction.status.block_time || "",
+        };
+        transactions.push(tx);
+      }
+    });
+  }
 
   transaction.vout.forEach((output) => {
     if (
-      output.scriptpubkey_address === address &&
-      transaction.vin.some(
-        (input) => input.prevout.scriptpubkey_address === address
-      )
+      output.scriptpubkey_address !== address
+      // transaction.vin.some(
+      //   (input) => input.prevout.scriptpubkey_address === address
+      // )
     ) {
       const tx = {
         block_hash: transaction.block_hash || "",
@@ -74,13 +58,13 @@ function transformBitcoinTransaction(transaction, address) {
         from_address: address,
         to_address: output.scriptpubkey_address,
         value: output.value,
-        txid: transaction.txid,
-        block_time: transaction.status.block_time,
+        txid: transaction.txid || "",
+        block_time: transaction.status.block_time || "",
       };
       transactions.push(tx);
     }
   });
-
+  console.log("___", transactions);
   return transactions;
 }
 
@@ -142,4 +126,5 @@ async function getAllTransactionsController(req, res) {
 
 module.exports = {
   getAllTransactionsController,
+  transformBitcoinTransaction,
 };
