@@ -17,7 +17,7 @@ const getArbTrans = async (req, res) => {
 			page: 1,
 			offset: 10,
 			sort: "asc",
-			apikey: "TXDPBETE5ERPAF52MTCKFPBCVHZFERWWRF", // Replace with your actual API key
+			apikey: "TXDPBETE5ERPAF52MTCKFPBCVHZFERWWRF", 
 		};
 
 		const response = await axios.get(url, { params });
