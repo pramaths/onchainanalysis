@@ -42,10 +42,11 @@ function transformBitcoinTransaction(transaction, address) {
     });
   }
 
+  if(   transaction.vout && transaction.vout.length> 0){
   transaction.vout.forEach((output) => {
     if (
+      output.scriptpubkey_address &&
       output.scriptpubkey_address !== address
-
     ) {
       const tx = {
         block_hash: transaction.block_hash || "",
@@ -62,6 +63,7 @@ function transformBitcoinTransaction(transaction, address) {
       transactions.push(tx);
     }
   });
+}
   console.log("___", transactions);
   return transactions;
 }
@@ -88,7 +90,6 @@ async function fetchTransactions(address, lastSeenTxId = null) {
         ? chunkTransactions[chunkTransactions.length - 1].txid
         : null;
     if (lastTxId && lastTxId !== lastSeenTxId) {
-      // Recursively fetch more transactions and concatenate them.
       const moreTransactions = await fetchTransactions(address, lastTxId);
       allTransactions = allTransactions.concat(moreTransactions);
     }
