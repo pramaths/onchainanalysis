@@ -31,8 +31,8 @@ function transformBitcoinTransaction(transaction, address) {
           block_timestamp: transaction.block_timestamp
             ? new Date(transaction.block_timestamp).toISOString()
             : "",
-          from_address: input.prevout.scriptpubkey_address,
-          to_address: address,
+          from_address: input.prevout.scriptpubkey_address  || "pramath",
+          to_address: address ,
           value: input.prevout.value || "",
           txid: transaction.txid || "",
           block_time: transaction.status.block_time || "",
@@ -45,9 +45,7 @@ function transformBitcoinTransaction(transaction, address) {
   transaction.vout.forEach((output) => {
     if (
       output.scriptpubkey_address !== address
-      // transaction.vin.some(
-      //   (input) => input.prevout.scriptpubkey_address === address
-      // )
+
     ) {
       const tx = {
         block_hash: transaction.block_hash || "",
@@ -56,7 +54,7 @@ function transformBitcoinTransaction(transaction, address) {
           ? new Date(transaction.block_timestamp).toISOString()
           : "",
         from_address: address,
-        to_address: output.scriptpubkey_address,
+        to_address: output.scriptpubkey_address || "pramath",
         value: output.value,
         txid: transaction.txid || "",
         block_time: transaction.status.block_time || "",
@@ -72,15 +70,15 @@ async function fetchTransactions(address, lastSeenTxId = null) {
   let allTransactions = [];
   try {
     let response;
-    if (lastSeenTxId) {
-      response = await axios.get(
-        `https://btcscan.org/api/address/${address}/txs/chain/${lastSeenTxId}`
-      );
-    } else {
+    // if (lastSeenTxId) {
+    //   response = await axios.get(
+    //     `https://btcscan.org/api/address/${address}/txs/chain/${lastSeenTxId}`
+    //   );
+    // } else {
       response = await axios.get(
         `https://btcscan.org/api/address/${address}/txs/chain`
       );
-    }
+    // }
 
     const chunkTransactions = response.data || [];
     allTransactions = allTransactions.concat(chunkTransactions);

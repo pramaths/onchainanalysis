@@ -38,14 +38,14 @@ const getWalletTransactions = async (req, res) => {
 };
 const getTransactionDetails = async (req, res) => {
   try {
-    const { hash } = req.params;
+    const { hash, chain } = req.params;
     console.log(hash);
     if (!hash) {
       return res.status(400).send({ error: "Transaction hash is required" });
     }
 
     const response = await Moralis.EvmApi.transaction.getTransaction({
-      chain: "0x1",
+      chain: chain || "0x1",
       transactionHash: hash,
     });
     console.log(response);
