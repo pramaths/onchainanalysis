@@ -8,6 +8,7 @@ const Moralis = require('moralis').default;
 const session = require('express-session');
 let RedisStore = require('connect-redis').default;
 const redisClient = require('./utils/redis');
+const mongoose = require('mongoose');
 const cors = require("cors");
 const http = require("http");
 const compression = require("compression");
@@ -38,6 +39,23 @@ app.use(compression());
 // );
 
 // Middleware setup
+
+mongoose.connect(process.env.MONOGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.connection.on("connected", () => {
+  console.log("Connected to MongoDB successfully! 🚀🚀🚀 ");
+});
+mongoose.connection.on("error", (err) => {
+  console.log("Error connecting to MongoDB: ", err);
+});
+
+mongoose.connection.on("disconnected", () => {
+  console.log("MongoDB disconnected!");
+});
+
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -64,11 +82,11 @@ const transporter = nodemailer.createTransport({
 // Routes
 const EthtransactionRoutes = require("./routes/Ethereum");
 const BitcointransactionsRouter = require("./routes/Bitcoin");
-const analysis = require("./routes/analysis");
+const address = require("./routes/address");
 
 app.use("/api", BitcointransactionsRouter);
 app.use("/api", EthtransactionRoutes);
-app.use("/api", analysis);
+app.use("/api", address);
 app.use("/api", monitor);
 
 app.get("/", (req, res) => {
