@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { balance } = require('./endpoint_functions');
-const ApiKey = mongoose.model('API_KEYS', new mongoose.Schema({}, { strict: false }), 'API_KEYS');
+const Providers = require('../../../../models/providers');
 
 const getBalance = async (req, res) => {
     try {
