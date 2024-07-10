@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const monitor = require("./routes/monitor");
 const nodemailer = require("nodemailer");
 const Moralis = require('moralis').default;
 const session = require('express-session');
@@ -15,9 +14,10 @@ const compression = require("compression");
 const helmet = require("helmet");
 require("dotenv").config();
 
-const { initAPI, fetchTransaction } = require("./utils/keyRotation");
-
 const app = express();
+
+const { initAPI, fetchTransaction } = require("./utils/keyRotation");
+const monitor = require("./routes/monitor");
 
 // Security and performance middleware
 app.use(helmet());
@@ -40,7 +40,7 @@ app.use(compression());
 
 // Middleware setup
 
-mongoose.connect(process.env.MONOGO_URI, {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -146,4 +146,5 @@ app.get("/events", (req, res) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log(`Swagger UI available at http://localhost:${port}/api-docs`);
 });
