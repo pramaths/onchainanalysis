@@ -1,14 +1,14 @@
-const etherscan = `https://api.etherscan.io/`;
-const polygonscan = `https://api.polygonscan.com/`;
-const bscscan = `https://api.bscscan.com/`;
-const ftmscan = `https://api.ftmscan.com/`;
-const arbiscan = `https://api.arbiscan.com/`;
-const basescan = `https://api.basescan.io/`;
-const snowscan = `https://api.snowscan.xyz.io/`;
+const etherscan = `https://api.etherscan.io/api`;
+const polygonscan = `https://api.polygonscan.com/api`;
+const bscscan = `https://api.bscscan.com/api`;
+const ftmscan = `https://api.ftmscan.com/api`;
+const arbiscan = `https://api.arbiscan.com/api`;
+const basescan = `https://api.basescan.io/api`;
+const snowscan = `https://api.snowscan.xyz.io/api`;
 const lineascan = `https://api.lineascan.io/`;
-const gnosisscan = `https://api.gnosisscan.io/`;
-const optimisticetherscan = `https://api-optimistic.etherscan.io/`;
-const celoscan = `https://api.celoscan.io/`;
+const gnosisscan = `https://api.gnosisscan.io/api`;
+const optimisticetherscan = `https://api-optimistic.etherscan.io/api`;
+const celoscan = `https://api.celoscan.io/api`;
 // const cronos
 
 const explorers = [

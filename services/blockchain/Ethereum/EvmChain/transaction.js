@@ -3,11 +3,14 @@ const { normalTransactions } = require('./endpoint_functions');
 const Provider = require('../../../../models/providers');
 
 async function getNextValidApiKey() {
-    const etherscanProvider = await Provider.findOne({ name: 'Etherscan' });
+    const etherscanProvider = await Provider.findOne({ name: 'ETHERSCAN' });
+    console.log(etherscanProvider);
     if (etherscanProvider && etherscanProvider.currentPointer < etherscanProvider.apiKeys.length) {
         const apiKey = etherscanProvider.apiKeys[etherscanProvider.currentPointer];
         etherscanProvider.currentPointer = (etherscanProvider.currentPointer + 1) % etherscanProvider.apiKeys.length;
         await etherscanProvider.save();
+        console.log(`Using Etherscan API key: ${apiKey}`);
+        console.log(`Current pointer for Etherscan: ${etherscanProvider.currentPointer}`);
         return { apiKey, providerName: etherscanProvider.name };
     }
 
@@ -37,6 +40,8 @@ const getNormalTransactions = async (req, res) => {
         while (attempts < maxAttempts) {
             try {
                 apiKeyInfo = await getNextValidApiKey();
+                console.log(`Using provider: ${apiKeyInfo.providerName}`);
+                console.log(`Using API key: ${apiKeyInfo.apiKey}`);
                 response = await normalTransactions(address, apiKeyInfo.apiKey);
                 break; 
             } catch (error) {
@@ -47,7 +52,6 @@ const getNormalTransactions = async (req, res) => {
                 }
             }
         }
-        co
         res.json({
             ...response,
         });
