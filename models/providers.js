@@ -1,15 +1,19 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const providerSchema = new Schema({
-  name: {
+const apiProviderSchema = new Schema({
+  providerName: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
-  apiKeys: {
+  apiKey: {
     type: [String],
     required: true
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['SDK', 'URL']
   },
   currentPointer: {
     type: Number,
@@ -17,6 +21,6 @@ const providerSchema = new Schema({
   }
 });
 
-const Provider = mongoose.model('Provider', providerSchema);
+const ApiProvider = mongoose.model('ApiProvider', apiProviderSchema);
 
-module.exports = Provider;
+module.exports = ApiProvider;
