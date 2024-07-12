@@ -4,8 +4,6 @@ const logger = require('../utils/logger');
 async function fetchAndSortProviders() {
   try {
   const providers = await Provider.find({}).sort({ type: 1 }); 
-  logger.info('Providers fetched and sorted', providers);
-  console.log('Providers fetched and sorted', providers);
   return providers;
   } catch (error) {
     console.error('Error fetching providers:', error);

@@ -32,6 +32,7 @@
     "mongoose": "^8.1.1",
     "moralis": "^2.26.7",
     "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.11",
     "puppeteer": "^22.0.0",
     "redis": "^4.6.14",

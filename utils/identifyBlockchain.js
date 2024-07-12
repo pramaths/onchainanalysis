@@ -10,8 +10,8 @@ function identifyBlockchain(address) {
       result.network = 'Mainnet';
       result.networkCode = 'BTC';
   } else if (address.startsWith('0x') && address.length === 42) {
-      result.blockchain = 'Ethereum/Binance Smart Chain';
-      result.network = 'ETH_MAINNET/BSC_MAINNET';
+      result.blockchain = 'Ethereum';
+      result.network = 'ETH_MAINNET';
       result.networkCode = '0x1/0x38';
   } else if ((address.startsWith('L') || address.startsWith('M') || address.startsWith('ltc1')) && (address.length >= 26 && address.length <= 35)) {
       result.blockchain = 'Litecoin (LTC)';

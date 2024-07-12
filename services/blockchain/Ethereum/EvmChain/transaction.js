@@ -9,32 +9,44 @@ async function getNextValidApiKey() {
     const sdkProviders = providers.filter(provider => provider.type === 'SDK');
     console.log('URL Providers:', urlProviders);
 
-    // Helper function to find the next valid API key
-    async function findApiKey(providerList) {
+    async function findUrlApiKeys(providerList) {
+        let URLproviders = [];
+        for (let provider of providerList) {
+            if (provider.currentPointer < provider.apiKeys.length) {
+                const apiKey = provider.apiKeys[provider.currentPointer]; 
+                const providerName = provider.providerName;
+                provider.currentPointer = (provider.currentPointer + 1) % provider.apiKeys.length;
+                await updateCurrentPointer(provider._id, provider.currentPointer);
+                URLproviders.push({ providerName, apiKey });
+            }
+        }
+        return URLproviders;
+    }
+    
+    async function findSdkApiKey(providerList) {
         for (let provider of providerList) {
             if (provider.currentPointer < provider.apiKeys.length) {
                 const apiKey = provider.apiKeys[provider.currentPointer];
+                const providerName = provider.providerName;
                 provider.currentPointer = (provider.currentPointer + 1) % provider.apiKeys.length;
                 await updateCurrentPointer(provider._id, provider.currentPointer);
-                return { apiKey, providerName: provider.providerName };
+                return { providerName, apiKey }; // Return the first valid SDK provider
             }
         }
         return null;
     }
 
-    // Try to get API key from URL providers first
-    let apiKeyInfo = await findApiKey(urlProviders);
-    if (apiKeyInfo) {
-        return apiKeyInfo;
+    let URLproviderConfig = await findUrlApiKeys(urlProviders);
+    console.log('URLproviderConfig:', URLproviderConfig);
+    if (URLproviderConfig) {
+        return URLproviderConfig;
     }
 
-    // If no URL API key found, try SDK providers
-    apiKeyInfo = await findApiKey(sdkProviders);
-    if (apiKeyInfo) {
-        return apiKeyInfo;
+    SDKproviderConfig = await findSdkApiKey(sdkProviders);
+    if (SDKproviderConfig) {
+        return SDKproviderConfig;
     }
 
-    // If no API key found in both lists
     throw new Error("All API keys exhausted across all providers");
 }
 
@@ -44,20 +56,16 @@ const getNormalTransactions = async (req, res) => {
         const { address } = req.params;
         console.log(`Fetching normal transactions for address: ${address}`);
 
-        let apiKeyInfo;
+        let providerConfig;
         let response;
 
         try {
-            apiKeyInfo = await getNextValidApiKey();
-            if (!apiKeyInfo) {
+            providerConfig = await getNextValidApiKey();
+            if (!providerConfig) {
                 throw new Error("No valid API keys available.");
             }
-            console.log(`Using provider: ${apiKeyInfo.providerName}`);
-            logger.info(`Using provider: ${apiKeyInfo.providerName}`);
-            console.log(`Using API key: ${apiKeyInfo.apiKey}`);
-            response = await normalTransactions(address, apiKeyInfo.apiKey);
+            response = await normalTransactions(address, providerConfig);
         } catch (error) {
-            console.error(`Operation failed with provider ${apiKeyInfo ? apiKeyInfo.providerName : 'unknown'}:`, error.message);
             logger.error(`Operation failed: ${error.message}`);
             return res.status(500).send(error.message);
         }
