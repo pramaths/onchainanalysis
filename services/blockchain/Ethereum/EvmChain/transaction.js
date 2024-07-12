@@ -1,31 +1,43 @@
-const mongoose = require('mongoose');
 const { normalTransactions } = require('./endpoint_functions');
-const Provider = require('../../../../models/providers');
+const {  fetchAndSortProviders,updateCurrentPointer} = require('../../../../db/providerService');
+const logger = require('../../../../utils/logger');
 
 async function getNextValidApiKey() {
-    const etherscanProvider = await Provider.findOne({ name: 'ETHERSCAN' });
-    console.log(etherscanProvider);
-    if (etherscanProvider && etherscanProvider.currentPointer < etherscanProvider.apiKeys.length) {
-        const apiKey = etherscanProvider.apiKeys[etherscanProvider.currentPointer];
-        etherscanProvider.currentPointer = (etherscanProvider.currentPointer + 1) % etherscanProvider.apiKeys.length;
-        await etherscanProvider.save();
-        console.log(`Using Etherscan API key: ${apiKey}`);
-        console.log(`Current pointer for Etherscan: ${etherscanProvider.currentPointer}`);
-        return { apiKey, providerName: etherscanProvider.name };
-    }
+    const providers = await fetchAndSortProviders(); // This returns all providers sorted by priority
+    console.log('Providers:', providers);
+    const urlProviders = providers.filter(provider => provider.type === 'URL');
+    const sdkProviders = providers.filter(provider => provider.type === 'SDK');
+    console.log('URL Providers:', urlProviders);
 
-    const providers = await Provider.find({ name: { $ne: 'Etherscan' } }).sort('name');
-    for (let provider of providers) {
-        if (provider.currentPointer < provider.apiKeys.length) {
-            const apiKey = provider.apiKeys[provider.currentPointer];
-            provider.currentPointer = (provider.currentPointer + 1) % provider.apiKeys.length;
-            await provider.save();
-            return { apiKey, providerName: provider.name };
+    // Helper function to find the next valid API key
+    async function findApiKey(providerList) {
+        for (let provider of providerList) {
+            if (provider.currentPointer < provider.apiKeys.length) {
+                const apiKey = provider.apiKeys[provider.currentPointer];
+                provider.currentPointer = (provider.currentPointer + 1) % provider.apiKeys.length;
+                await updateCurrentPointer(provider._id, provider.currentPointer);
+                return { apiKey, providerName: provider.providerName };
+            }
         }
+        return null;
     }
 
+    // Try to get API key from URL providers first
+    let apiKeyInfo = await findApiKey(urlProviders);
+    if (apiKeyInfo) {
+        return apiKeyInfo;
+    }
+
+    // If no URL API key found, try SDK providers
+    apiKeyInfo = await findApiKey(sdkProviders);
+    if (apiKeyInfo) {
+        return apiKeyInfo;
+    }
+
+    // If no API key found in both lists
     throw new Error("All API keys exhausted across all providers");
 }
+
 
 const getNormalTransactions = async (req, res) => {
     try {
@@ -34,27 +46,23 @@ const getNormalTransactions = async (req, res) => {
 
         let apiKeyInfo;
         let response;
-        let attempts = 0;
-        const maxAttempts = 1; 
 
-        while (attempts < maxAttempts) {
-            try {
-                apiKeyInfo = await getNextValidApiKey();
-                console.log(`Using provider: ${apiKeyInfo.providerName}`);
-                console.log(`Using API key: ${apiKeyInfo.apiKey}`);
-                response = await normalTransactions(address, apiKeyInfo.apiKey);
-                break; 
-            } catch (error) {
-                console.error(`Attempt ${attempts + 1} failed with provider ${apiKeyInfo.providerName}:`, error.message);
-                attempts++;
-                if (attempts >= maxAttempts) {
-                    throw new Error("Max attempts reached. Unable to fetch normal transactions.");
-                }
+        try {
+            apiKeyInfo = await getNextValidApiKey();
+            if (!apiKeyInfo) {
+                throw new Error("No valid API keys available.");
             }
+            console.log(`Using provider: ${apiKeyInfo.providerName}`);
+            logger.info(`Using provider: ${apiKeyInfo.providerName}`);
+            console.log(`Using API key: ${apiKeyInfo.apiKey}`);
+            response = await normalTransactions(address, apiKeyInfo.apiKey);
+        } catch (error) {
+            console.error(`Operation failed with provider ${apiKeyInfo ? apiKeyInfo.providerName : 'unknown'}:`, error.message);
+            logger.error(`Operation failed: ${error.message}`);
+            return res.status(500).send(error.message);
         }
-        res.json({
-            ...response,
-        });
+
+        res.json(response);
     } catch (e) {
         console.error(e);
         res.status(500).send("An error occurred while fetching normal transactions");

@@ -12,6 +12,7 @@ const cors = require("cors");
 const http = require("http");
 const compression = require("compression");
 const helmet = require("helmet");
+const logger = require('./utils/logger');
 require("dotenv").config();
 
 const app = express();
@@ -39,22 +40,17 @@ app.use(compression());
 // );
 
 // Middleware setup
+app.use(morgan('tiny', { stream: logger.stream }));
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000 // Increase timeout to 30 seconds
+}).then(() => {
+  console.log('MongoDB connected successfully 🚀🚀🚀');
+}).catch((error) => {
+  console.error('Error connecting to MongoDB:', error);
 });
-mongoose.connection.on("connected", () => {
-  console.log("Connected to MongoDB successfully! 🚀🚀🚀 ");
-});
-mongoose.connection.on("error", (err) => {
-  console.log("Error connecting to MongoDB: ", err);
-});
-
-mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB disconnected!");
-});
-
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));

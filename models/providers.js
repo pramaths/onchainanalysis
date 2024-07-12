@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const apiProviderSchema = new Schema({
+const ProviderSchema = new Schema({
   providerName: {
     type: String,
     required: true
   },
-  apiKey: {
+  apiKeys: {
     type: [String],
     required: true
   },
@@ -21,6 +21,6 @@ const apiProviderSchema = new Schema({
   }
 });
 
-const ApiProvider = mongoose.model('ApiProvider', apiProviderSchema);
+const Provider = mongoose.model('Provider', ProviderSchema);
 
-module.exports = ApiProvider;
+module.exports = Provider;
