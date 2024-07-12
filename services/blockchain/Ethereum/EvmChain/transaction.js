@@ -42,7 +42,7 @@ async function getNextValidApiKey() {
         return URLproviderConfig;
     }
 
-    SDKproviderConfig = await findSdkApiKey(sdkProviders);
+   let SDKproviderConfig = await findSdkApiKey(sdkProviders);
     if (SDKproviderConfig) {
         return SDKproviderConfig;
     }

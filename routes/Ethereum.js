@@ -10,6 +10,7 @@ const {
 const {
   getNormalTransactions,
 } = require("../services/blockchain/Ethereum/EvmChain/transaction");
+const { getEthBalance } = require("../services/blockchain/Ethereum/EvmChain/address");
 const { getArbTrans } = require("../services/blockchain/Ethereum/arbitrum");
 const {
   getTransactionDetails,
@@ -18,7 +19,7 @@ const {
 router.get("/eth/:chain/:address/:pagesize?", getWalletTransactions);
 router.get("/arb/:address", getArbTrans);
 router.get("/transaction/:hash", getTransactionDetails);
-router.get("/evmchain/:address", getBalance);
 router.get("/evmchain/transactions/:address", getNormalTransactions);
+router.get("/evmchain/:address/", getEthBalance);
 
 module.exports = router;

@@ -15,6 +15,12 @@ const ProviderSchema = new Schema({
     required: true,
     enum: ['SDK', 'URL']
   },
+  blockchain: {
+    type: String,
+    required: true,
+    enum: ['Bitcoin','Ethereum', 'Binance Smart Chain', 'Avalanche', 'Solana', 'Polkadot', 'Tezos', 'Tron', 'Stellar', 'EOS', 'Monero', 'Cosmos', 'Algorand', 'Zilliqa', 'Harmony', 'DigiByte'],
+    default: 'Ethereum'
+  },
   currentPointer: {
     type: Number,
     default: 0

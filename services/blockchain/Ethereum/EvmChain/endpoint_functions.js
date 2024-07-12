@@ -14,7 +14,10 @@ const balance = async (address, providerConfigs) => {
             if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
             const url = baseUrl + getBalanceUrl(address, providerConfig.apiKey);
             const response = await axios.get(url);
-            return response.data;
+             return {
+                data: response.data,
+                providerName: providerConfig.providerName // Always include provider name
+            };
         } catch (error) {
             return { error: true, providerName: providerConfig.providerName, message: error.message };
         }
@@ -29,7 +32,10 @@ const normalTransactions = async (address, providerConfigs) => {
             if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
             const url = baseUrl + getNormalTransactionUrl(address, providerConfig.apiKey);
             const response = await axios.get(url);
-            return response.data;
+             return {
+                data: response.data,
+                providerName: providerConfig.providerName // Always include provider name
+            };
         } catch (error) {
             return { error: true, providerName: providerConfig.providerName, message: error.message };
         }
@@ -44,7 +50,10 @@ const internalTransactions = async (providerConfigs, address) => {
             if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
             const url = baseUrl + getInternalTransactionUrl(address, providerConfig.apiKey);
             const response = await axios.get(url);
-            return response.data;
+             return {
+                data: response.data,
+                providerName: providerConfig.providerName // Always include provider name
+            };
         } catch (error) {
             return { error: true, providerName: providerConfig.providerName, message: error.message };
         }

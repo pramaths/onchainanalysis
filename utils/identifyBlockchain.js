@@ -89,3 +89,35 @@ function identifyBlockchain(address) {
 
   return result;
 }
+
+
+function identifyBlockchainByHash(hash) {
+    let result = {
+        blockchain: '',
+        network: '',
+        networkCode: ''
+    };
+
+    if (hash.startsWith('0x') && hash.length === 66) {
+        result.blockchain = 'Ethereum';
+        result.network = 'ETH_MAINNET';
+        result.networkCode = '0x1/0x38';
+    } else if (hash.length === 64) {
+        result.blockchain = 'Bitcoin/Litecoin/others';
+        result.network = 'Mainnet';
+        result.networkCode = 'BTC/LTC/others';
+    } else if (hash.startsWith('0x') && hash.length === 64) {
+        result.blockchain = 'Custom Blockchain';
+        result.network = 'Custom_MAINNET';
+        result.networkCode = 'Custom';
+    } else {
+        result.blockchain = 'Unknown or unsupported hash format';
+        result.network = 'Unknown';
+        result.networkCode = 'Unknown';
+    }
+
+    return result;
+}
+
+
+module.exports = {  identifyBlockchain, identifyBlockchainByHash };
