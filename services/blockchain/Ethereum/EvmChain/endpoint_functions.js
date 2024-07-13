@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { explorers } = require('./BaseUrl');
 const { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl } = require('./Queryparams');
+const {EvmChainSerializer} = require('../../../../serializers/EvmChainSerializer');
 
 const getUrlForProvider = (providerName) => {
     const explorer = explorers.find(ex => ex.name.toLowerCase() === providerName.toLowerCase());
@@ -32,10 +33,20 @@ const normalTransactions = async (address, providerConfigs) => {
             if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
             const url = baseUrl + getNormalTransactionUrl(address, providerConfig.apiKey);
             const response = await axios.get(url);
+            if(response.data && response.data.result && response.data.message === 'OK'){
              return {
+                data: EvmChainSerializer(response.data.result),
+                // data: response.data,
+                providerName: providerConfig.providerName // Always include provider name
+            };
+        }
+        
+        else{
+            return {
                 data: response.data,
                 providerName: providerConfig.providerName // Always include provider name
             };
+        }
         } catch (error) {
             return { error: true, providerName: providerConfig.providerName, message: error.message };
         }

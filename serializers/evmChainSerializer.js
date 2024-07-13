@@ -1,15 +1,20 @@
 
 function EvmChainSerializer(data) {
-    return {
-        transactionHash: data.hash,
-        from_address: data.from,
-        to_address: data.to,
-        value: data.value,
-        timestamp: new Date(data.timeStamp * 1000),
-        nonce: data.nonce,
-        blockNumber: data.blockNumber,
-        status: data.isSuccess,
-        contractAddress: data.contractAddress || null,
-        logs: data.logs || []
-    };
+    formatedData=[];
+    data.map((item) => {
+        formatedData.push({
+            transactionHash: item.hash,
+            from_address: item.from,
+            to_address: item.to,
+            value: item.value,
+            timestamp: new Date(item.timeStamp * 1000),
+            nonce: item.nonce,
+            blockNumber: item.blockNumber,
+            status: item.isSuccess,
+            contractAddress: item.contractAddress || null,
+        });}
+    );
+    return formatedData;
 }
+
+module.exports ={ EvmChainSerializer};
