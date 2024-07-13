@@ -55,7 +55,7 @@ function transformBitcoinTransaction(transaction, address) {
           ? new Date(transaction.block_timestamp).toISOString()
           : "",
         from_address: address,
-        to_address: output.scriptpubkey_address || "pramath",
+        to_address: output.scriptpubkey_address || "",
         value: output.value,
         txid: transaction.txid || "",
         block_time: transaction.status.block_time || "",
