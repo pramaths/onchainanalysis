@@ -17,9 +17,7 @@ const getBalance = async (address) => {
 
     async function getAllTransactionsControllers(req, res) {
         const address = req.params.address;
-      
-        // Set headers for SSE
-        res.writeHead(200, {
+              res.writeHead(200, {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive'
