@@ -72,4 +72,24 @@ const internalTransactions = async (providerConfigs, address) => {
     return results;
 }
 
-module.exports = { balance, normalTransactions, internalTransactions };
+const txHash =async(providerConfigs,txHash)=>{
+    const results = await Promise.all(providerConfigs.map(async providerConfig => {
+        try {
+            const baseUrl = getUrlForProvider(providerConfig.providerName);
+            if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
+            const url = baseUrl + txHash(txHash, providerConfig.apiKey);
+            const response = await axios.get(url);
+             return {
+                data: response.data,
+                providerName: providerConfig.providerName
+            };
+        } catch (error) {
+            return { error: true, providerName: providerConfig.providerName, message: error.message };
+        }
+    }));
+    return results;
+}
+
+
+
+module.exports = { balance, normalTransactions, internalTransactions, txHash };

@@ -1,8 +1,8 @@
-const getBalanceUrl = (address, api_key = '') => {
+const getBalanceUrl = (address) => {
     return `address/${address}`;
 };
 
-const getNormalTransactionUrl = (address, api_key = '', lastSeenTxId = " ") => {
+const getNormalTransactionUrl = (address, lastSeenTxId = " ") => {
    return `address/${address}/txs/chain/${lastSeenTxId}`
 };
 

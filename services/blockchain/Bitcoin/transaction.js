@@ -1,69 +1,7 @@
 const axios = require("axios");
-
-function transformBitcoinTransaction(transaction, address) {
-  const transactions = [];
-
-  if (!transaction.vin) {
-    if (transaction.prevout.scriptpubkey_address !== address) {
-      console.log("No vin found in transaction:", transaction.txid);
-      const tx = {
-        block_hash: transaction.status.block_hash || "",
-        block_number: transaction.status.block_no || "",
-        block_timestamp: transaction.status.block_timestamp
-          ? new Date(transaction.status.block_timestamp).toISOString()
-          : "",
-        from_address: transaction.prevout.scriptpubkey_address,
-        to_address: address,
-        value: transaction.vout[0].value || "",
-        txid: transaction.txid || "",
-      };
-      console.log("+++", tx);
-      transactions.push(tx);
-    }
-  }
-  if (transaction.vin && transaction.vin.length > 0) {
-    transaction.vin.forEach((input) => {
-      if (input.prevout && input.prevout.scriptpubkey_address !== address) {
-        const tx = {
-          block_hash: transaction.status.block_hash || "",
-          block_number: transaction.status.block_no || "",
-          block_timestamp: transaction.status.block_timestamp
-            ? new Date(transaction.status.block_timestamp).toISOString()
-            : "",
-          from_address: input.prevout.scriptpubkey_address  || "pramath",
-          to_address: address ,
-          value: input.prevout.value || "",
-          txid: transaction.txid || "",
-          };
-        transactions.push(tx);
-      }
-    });
-  }
-
-  if(   transaction.vout && transaction.vout.length> 0){
-  transaction.vout.forEach((output) => {
-    if (
-      output.scriptpubkey_address &&
-      output.scriptpubkey_address !== address
-    ) {
-      const tx = {
-        block_hash: transaction.status.block_hash || "",
-        block_number: transaction.status.block_no || "",
-        block_timestamp: transaction.status.block_timestamp
-          ? new Date(transaction.status.block_timestamp).toISOString()
-          : "",
-        from_address: address,
-        to_address: output.scriptpubkey_address || "",
-        value: output.value,
-        txid: transaction.txid || "",
-      };
-      transactions.push(tx);
-    }
-  });
-}
-  console.log("___", transactions);
-  return transactions;
-}
+const {
+  transformBitcoinTransaction,
+} = require("../../../serializers/btcSerializer");
 
 async function fetchTransactions(address, lastSeenTxId = null) {
   let allTransactions = [];
@@ -74,9 +12,9 @@ async function fetchTransactions(address, lastSeenTxId = null) {
     //     `https://btcscan.org/api/address/${address}/txs/chain/${lastSeenTxId}`
     //   );
     // } else {
-      response = await axios.get(
-        `https://btcscan.org/api/address/${address}/txs/chain`
-      );
+    response = await axios.get(
+      `https://btcscan.org/api/address/${address}/txs/chain`
+    );
     // }
 
     const chunkTransactions = response.data || [];
@@ -122,5 +60,4 @@ async function getAllTransactionsController(req, res) {
 
 module.exports = {
   getAllTransactionsController,
-  transformBitcoinTransaction,
 };
