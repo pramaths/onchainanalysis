@@ -2,10 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 
-// Define the directory for the logs
 const logDir = path.join(__dirname, 'logs');
 
-// Check if the logs directory exists, if not, create it
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
