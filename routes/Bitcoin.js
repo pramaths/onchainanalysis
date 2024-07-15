@@ -4,7 +4,7 @@ const {getAllTransactionsControllers} = require('../services/blockchain/Bitcoin/
 const {getTxHashDetails} = require('../controllers/btc/txHashController');
 const router = express.Router();
 
-router.get('/bitcoin/transactions/:address', getAllTransactionsController);
+router.get('/bitcoin/address/:address', getAllTransactionsController);
 router.get('/bitcoin/trace/transactions/:address', getAllTransactionsControllers);
 router.get('/bitcoin/txHash/:txhash', getTxHashDetails );
 
