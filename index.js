@@ -19,8 +19,6 @@ const app = express();
 
 const { initAPI, fetchTransaction } = require("./utils/keyRotation");
 const monitor = require("./routes/monitor");
-
-// Security and performance middleware
 app.use(helmet());
 app.use(compression());
 
