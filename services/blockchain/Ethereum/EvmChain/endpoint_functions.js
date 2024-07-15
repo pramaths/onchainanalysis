@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { explorers } = require('./BaseUrl');
 const { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl, getTxhashUrl } = require('./Queryparams');
-const {EvmChainSerializer} = require('../../../../serializers/EvmChainSerializer');
+const {EvmChainSerializer} = require('../../../../serializers/evmChainSerializer');
 
 const getUrlForProvider = (providerName) => {
     const explorer = explorers.find(ex => ex.name.toLowerCase() === providerName.toLowerCase());
