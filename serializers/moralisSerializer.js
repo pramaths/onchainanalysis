@@ -1,14 +1,17 @@
 function moralisSerializer(data) {
-    return {
-        transactionHash: data.hash,
-        from_address: data.from,
-        to_address: data.to,
-        value: data.value,
-        timestamp: new Date(data.timeStamp * 1000),
-        nonce: data.nonce,
-        blockNumber: data.blockNumber,
-        status: data.isSuccess,
-        contractAddress: data.contractAddress || null,
-        logs: data.logs || []
-    };
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    return dataArray.map(item => ({
+        transactionHash: item.hash,
+        from_address: item.from_address || item.from,
+        to_address: item.to_address || item.to,
+        value: item.value,
+        timestamp: new Date(item.block_timestamp),
+        nonce: item.nonce || item.nonce,
+        blockNumber: item.block_number || item.blockNumber,
+        status: item.receipt_status === "1",
+        contractAddress: item.receipt_contract_address || null,
+    }));
 }
+
+module.exports = { moralisSerializer };

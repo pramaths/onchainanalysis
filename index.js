@@ -18,7 +18,6 @@ require("dotenv").config();
 const app = express();
 
 const { initAPI, fetchTransaction } = require("./utils/keyRotation");
-const monitor = require("./routes/monitor");
 app.use(helmet());
 app.use(compression());
 
@@ -79,7 +78,6 @@ const address = require("./routes/address");
 app.use("/api", BitcointransactionsRouter);
 app.use("/api", EthtransactionRoutes);
 app.use("/api", address);
-app.use("/api", monitor);
 
 app.get("/", (req, res) => {
   res.status(200).send("Welcome to the Crypto Tracker API");

@@ -1,5 +1,6 @@
 const Moralis = require("moralis").default;
 const redisClient = require('../../../utils/redis');
+const {moralisSerializer} = require('../../../serializers/moralisSerializer');
 Moralis.start({
   apiKey:
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImE0OWZiNmVmLTFlMjEtNDEwOC1hOGEyLTMyZWNhYmIwZDIyYSIsIm9yZ0lkIjoiMzgwOTMyIiwidXNlcklkIjoiMzkxNDI0IiwidHlwZUlkIjoiYmUzNWFhZDgtNjllYi00MGI3LWFlZWYtYzA2NDJiY2ZmNGY0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDk0MDUxNDQsImV4cCI6NDg2NTE2NTE0NH0.X2AL9Ir4Maawo1KiS7A2HxF6eyJewCD80mkRioQdzsA",
@@ -26,7 +27,8 @@ const getWalletTransactions = async (req, res) => {
       // console.log("Data retrieved from API ->", JSON.parse(response.raw.result.length));
       // await redisClient.set("cachedData", JSON.stringify(response.raw));
       // console.log("Caching in Redis...")
-      res.json(response.raw);
+      
+      res.json(moralisSerializer(response.raw));
     // } else {
     //   console.log("Data retrieved from Redis cache ->", JSON.parse(cachedData).result.length);
     //   res.json(JSON.parse(cachedData));
@@ -36,30 +38,6 @@ const getWalletTransactions = async (req, res) => {
     res.status(500).send("An error occurred while fetching transactions");
   }
 };
-const getTransactionDetails = async (req, res) => {
-  try {
-    const { hash, chain } = req.params;
-    console.log(hash);
-    if (!hash) {
-      return res.status(400).send({ error: "Transaction hash is required" });
-    }
 
-    const response = await Moralis.EvmApi.transaction.getTransaction({
-      chain: chain || "0x1",
-      transactionHash: hash,
-    });
-    console.log(response);
-    if (response.raw) {
-      res.json(response.raw);
-    } else {
-      res.status(404).send({ error: "Transaction not found" });
-    }
-  } catch (e) {
-    console.error(e);
-    res
-      .status(500)
-      .send({ error: "An error occurred while fetching transaction details" });
-  }
-};
 
-module.exports = { getWalletTransactions, getTransactionDetails };
+module.exports = { getWalletTransactions };
