@@ -10,11 +10,6 @@ const initAPI = () => {
   return alchemy;
 };
 
-const rotateAPI = () => {
-  console.log("Rotating API Key...");
-  curr = (curr + 1) % apiList.length;
-  return initAPI();
-};
 
 
   module.exports = {
