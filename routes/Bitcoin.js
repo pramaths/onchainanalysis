@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get('/bitcoin/address/:address', getAllTransactionsController);
 router.get('/bitcoin/trace/transactions/:address', getAllTransactionsControllers);
-router.get('/bitcoin/txHash/:txhash', getTxHashDetails );
+router.get('/btc/txHash/:txhash', getTxHashDetails );
 
 module.exports = router;
