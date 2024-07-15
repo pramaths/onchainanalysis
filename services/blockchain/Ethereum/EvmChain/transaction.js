@@ -1,6 +1,6 @@
 const { normalTransactions } = require('./endpoint_functions');
 const {  fetchAndSortProviders,updateCurrentPointer} = require('../../../../db/providerService');
-const logger = require('../../../../utils/logger');
+// const logger = require('../../../../utils/logger');
 
 async function getNextValidApiKey() {
     const providers = await fetchAndSortProviders(); // This returns all providers sorted by priority

@@ -1,5 +1,5 @@
 const { identifyBlockchain, identifyBlockchainByHash } = require('./utils/identifyBlockchain');
-const logger = require('./utils/logger');
+// const logger = require('./utils/logger');
 
 function routeBlockchainInput(type, input) {
     let result;
