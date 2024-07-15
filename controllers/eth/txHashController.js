@@ -15,13 +15,19 @@ Moralis.start({
 const getTransactionDetails = async (req, res) => {
     try {
       const { txhash, chain } = req.params;
-      console.log(txhash);
+      let chainId;
+      if(chain === 'eth'){
+         chainId= '0x1';
+        }
+        console.log("chain")
+      console.log("txhash",txhash);
+      console.log("chainid",chainId);
       if (!txhash) {
         return res.status(400).send({ error: "Transaction hash is required" });
       }
   
       const response = await Moralis.EvmApi.transaction.getTransaction({
-        chain: chain || "0x1",
+        chain: "0x1",
         transactionHash: txhash,
       });
       console.log(response);
