@@ -16,10 +16,13 @@ const {
   getTransactionDetails,
 } = require("../services/blockchain/Ethereum/transaction");
 
+const {txHashdetails} = require("../services/blockchain/Ethereum/EvmChain/txhash");
+
 router.get("/eth/:chain/:address/:pagesize?", getWalletTransactions);
 router.get("/arb/:address", getArbTrans);
 router.get("/transaction/:hash", getTransactionDetails);
 router.get("/evmchain/transactions/:address", getNormalTransactions);
 router.get("/evmchain/:address/", getEthBalance);
+router.get("/evmchain/txhash/:txhash", txHashdetails);
 
 module.exports = router;

@@ -87,7 +87,7 @@ const getEthBalance = async (req, res) => {
 
         res.json(summary);
     } catch (error) {
-        logger.error(`Operation failed: ${error.message}`);
+        console.log(`Operation failed: ${error.message}`);
         res.status(500).send("An error occurred while fetching balance data");
     }
 }

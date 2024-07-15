@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { explorers } = require('./BaseUrl');
-const { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl } = require('./Queryparams');
+const { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl, getTxhashUrl } = require('./Queryparams');
 const {EvmChainSerializer} = require('../../../../serializers/EvmChainSerializer');
 
 const getUrlForProvider = (providerName) => {
@@ -77,7 +77,7 @@ const txHash =async(providerConfigs,txHash)=>{
         try {
             const baseUrl = getUrlForProvider(providerConfig.providerName);
             if (!baseUrl) throw new Error("Provider URL not found for " + providerConfig.providerName);
-            const url = baseUrl + txHash(txHash, providerConfig.apiKey);
+            const url = baseUrl + getTxhashUrl(txHash, providerConfig.apiKey);
             const response = await axios.get(url);
              return {
                 data: response.data,

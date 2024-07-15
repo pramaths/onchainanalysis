@@ -11,4 +11,8 @@ const getInternalTransactionUrl = (address, api_key) => {
 };
 
 
-module.exports = { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl }; 
+const getTxhashUrl = (txHash, api_key) => {
+  return `?module=transaction&action=getstatus&txhash=${txHash}&apikey=${api_key}`;
+};
+
+module.exports = { getBalanceUrl, getNormalTransactionUrl, getInternalTransactionUrl, getTxhashUrl }; 
