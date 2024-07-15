@@ -3,7 +3,7 @@ const {  fetchAndSortProviders,updateCurrentPointer} = require('../../../../db/p
 const logger = require('../../../../utils/logger');
 
 async function getNextValidApiKey() {
-    const providers = await fetchAndSortProviders(); // This returns all providers sorted by priority
+    const providers = await fetchAndSortProviders(); 
     console.log('Providers:', providers);
     const urlProviders = providers.filter(provider => provider.type === 'URL');
     const sdkProviders = providers.filter(provider => provider.type === 'SDK');

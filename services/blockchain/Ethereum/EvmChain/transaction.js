@@ -66,7 +66,7 @@ const getNormalTransactions = async (req, res) => {
             }
             response = await normalTransactions(address, providerConfig);
         } catch (error) {
-            logger.error(`Operation failed: ${error.message}`);
+            console.log(`Operation failed: ${error.message}`);
             return res.status(500).send(error.message);
         }
 

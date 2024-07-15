@@ -12,7 +12,7 @@ const cors = require("cors");
 const http = require("http");
 const compression = require("compression");
 const helmet = require("helmet");
-const logger = require('./utils/logger');
+// const logger = require('./utils/logger');
 require("dotenv").config();
 
 const app = express();
