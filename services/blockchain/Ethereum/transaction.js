@@ -28,7 +28,7 @@ const getWalletTransactions = async (req, res) => {
       // await redisClient.set("cachedData", JSON.stringify(response.raw));
       // console.log("Caching in Redis...")
       
-      res.json(moralisSerializer(response.raw));
+      res.json((response.raw));
     // } else {
     //   console.log("Data retrieved from Redis cache ->", JSON.parse(cachedData).result.length);
     //   res.json(JSON.parse(cachedData));
