@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get('/address/:address', getAllTransactionsController);
 router.get('/trace/transactions/:address', getAllTransactionsControllers);
-router.get('/txHash/:txhash', getTxHashDetails );
+router.get('/txhash/:txhash', getTxHashDetails );
 
 module.exports = router;

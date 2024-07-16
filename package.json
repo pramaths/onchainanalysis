@@ -19,6 +19,8 @@
     "connect-redis": "^7.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
+    "debug": "^4.3.5",
     "dotenv": "^16.4.1",
     "dotenv-safe": "^9.0.0",
     "ethers": "^6.10.0",

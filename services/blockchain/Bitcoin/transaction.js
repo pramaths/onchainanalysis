@@ -38,7 +38,9 @@ async function fetchTransactions(address, lastSeenTxId = null) {
 async function getAllTransactionsController(req, res) {
   try {
     const address = req.params.address;
+    console.log("Address:", address);
     const transactions = await fetchTransactions(address);
+    console.log("Transactions:", transactions);
     if (transactions === "error") {
       return res.status(500).json({ error: "Internal Server Error" });
     }
