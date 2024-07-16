@@ -1,14 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const walletRoutes = require("./walletRoutes");
-const transactionRoutes = require("./transactionRoutes");
-// Add other route files similarly
-// const someOtherRoutes = require("./someOtherRoutes");
+const btcRoutes = require("./bitcoinRoutes");
+const ethRoutes = require("./ethereumRoutes");
 
-router.use("/wallet", walletRoutes);
-router.use("/transaction", transactionRoutes);
-// Add other routes similarly
-// router.use("/someOtherPath", someOtherRoutes);
+
+router.use('/btc', btcRoutes);
+router.use('/eth', ethRoutes);
+
 
 module.exports = router;

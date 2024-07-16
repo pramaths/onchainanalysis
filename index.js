@@ -14,7 +14,7 @@ const compression = require("compression");
 const helmet = require("helmet");
 // const logger = require('./utils/logger');
 require("dotenv").config();
-
+const routes= require('./routes');
 const app = express();
 
 const { initAPI, fetchTransaction } = require("./utils/keyRotation");
@@ -70,14 +70,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Routes
-const EthtransactionRoutes = require("./routes/Ethereum");
-const BitcointransactionsRouter = require("./routes/Bitcoin");
-const address = require("./routes/address");
 
-app.use("/api", BitcointransactionsRouter);
-app.use("/api", EthtransactionRoutes);
-app.use("/api", address);
+
+app.use('/api', routes);
 
 app.get("/", (req, res) => {
   res.status(200).send("Welcome to the Crypto Tracker API");
@@ -112,29 +107,10 @@ app.get("/trx/:hash", (req, res) => {
   fetchTransaction(hash, alchemyInstance, res);
 });
 
-// Server-Sent Events (SSE) for real-time updates
-app.get("/events", (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
 
-  const sendEvent = (data) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-  };
-
-  // Example: sending a message every 10 seconds
-  const intervalId = setInterval(() => {
-    sendEvent({ message: "Hello from SSE" });
-  }, 10000);
-
-  req.on("close", () => {
-    clearInterval(intervalId);
-  });
-});
 
 // Start the server
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log(`Swagger UI available at http://localhost:${port}/api-docs`);
 });
