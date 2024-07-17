@@ -15,7 +15,9 @@ function transformBitcoinTransaction(transaction, address) {
         txid: transaction.txid || "",
         status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
       };
-      transactions.push(tx);
+      if (tx.from_address === address || tx.to_address === address) {
+        transactions.push(tx);
+      }
     }
   }
   if (transaction.vin && transaction.vin.length > 0) {
@@ -33,7 +35,9 @@ function transformBitcoinTransaction(transaction, address) {
           txid: transaction.txid || "",
           status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
           };
-        transactions.push(tx);
+          if (tx.from_address === address || tx.to_address === address) {
+            transactions.push(tx);
+          }
       }
     });
   }
@@ -55,7 +59,9 @@ function transformBitcoinTransaction(transaction, address) {
               txid: transaction.txid || "",
               status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
             };
-            transactions.push(tx);
+            if (tx.from_address === address || tx.to_address === address) {
+              transactions.push(tx);
+            }
           }
         });
       }

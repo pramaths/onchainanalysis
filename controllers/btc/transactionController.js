@@ -43,14 +43,14 @@ async function processAddressLayer(address, currentLayer, maxLayers, processedAd
 
     while (totalTransactions < 250) {
         const transactions = await getNormalTransactions(address, lastSeenTxId);
-
+        console.log('====',transactions.length);
         if (transactions.length === 0) break;
 
         const transformedTransactions = transactions.flatMap(tx => transformBitcoinTransaction(tx, address));
-
+        console.log(transformedTransactions)
         const filteredTransactions = transformedTransactions.filter(tx => {
-            const btcValue = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
-            return btcValue >= MIN_BTC_VALUE;
+            const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
+            return value >= MIN_BTC_VALUE;
         }).sort((a, b) => parseInt(b.value) - parseInt(a.value));
 
         totalTransactions += filteredTransactions.length;
@@ -65,11 +65,13 @@ async function processAddressLayer(address, currentLayer, maxLayers, processedAd
         });
 
         filteredTransactions.forEach(tx => {
-            if (tx.from !== address) uniqueAddresses.add(tx.from);
-            if (tx.to !== address) uniqueAddresses.add(tx.to);
+            if (tx.from_address !== address) uniqueAddresses.add(tx.from_address);
+            if (tx.to_address !== address) uniqueAddresses.add(tx.to_address);
         });
 
         lastSeenTxId = transactions[transactions.length - 1].txid;
+        console.log('lastSeenTxId',lastSeenTxId);
+        console.log('uniqueAddresses',uniqueAddresses);
 
         await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
     }
@@ -104,15 +106,15 @@ async function processNextLayer(addresses, currentLayer, maxLayers, processedAdd
         processedAddresses.add(address);
 
         return filteredTransactions.reduce((acc, tx) => {
-            if (tx.from !== address) acc.add(tx.from);
-            if (tx.to !== address) acc.add(tx.to);
+            if (tx.from_address !== address) acc.add(tx.from_address);
+            if (tx.to_address !== address) acc.add(tx.to_address);
             return acc;
         }, new Set());
     };
 
     const results = await Promise.all(addressesToProcess.map(processAddress));
     
-    const nextLayerAddresses = Array.from(new Set(results.flatMap(set => Array.from(set)))).slice(0, 10);
+    const nextLayerAddresses = Array.from(new Set(results.flatMap(set => Array.from(set)))).slice(0, 2);
     
     if (currentLayer < maxLayers - 1) {
         await processNextLayer(nextLayerAddresses, currentLayer + 1, maxLayers, processedAddresses, sendSSE);

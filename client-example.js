@@ -1,8 +1,7 @@
 const EventSource = require('eventsource');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-const fs = require('fs');
 
-const address = 'bc1qs4ln7kdtcwvcuaclqlv0qmf7cm446tdzjwv89c';
+const address = 'bc1qhg7fpzxl68m2g5l0ane9h9akw4hfnh2s8hn3gm';
 const eventSource = new EventSource(`http://localhost:8000/api/btc/trace/transactions/${address}`);
 
 // Initialize CSV writer
@@ -28,51 +27,37 @@ eventSource.onmessage = function(event) {
         layer: data.layerNumber,
         from_address: transaction.from_address,
         to_address: transaction.to_address,
-        value: transaction.value/100000000,
+        value: transaction.value / 100000000, // Convert from satoshi to BTC
         txid: transaction.txid,
         totalProcessed: data.totalProcessed,
       };
-      
-      console.log(`Layer: ${logEntry.layer}, From: ${logEntry.from_address}, To: ${logEntry.to_address}, Value: ${logEntry.value}, TXID: ${logEntry.txid}`);
+
+      // Log first transaction in each batch for visibility
+      if (index === 0) {
+        console.log('First transaction in batch:', JSON.stringify(transaction, null, 2));
+      }
       
       // Write the log entry to the CSV file
       csvWriter.writeRecords([logEntry])
         .then(() => console.log('Transaction log entry written to CSV file.'))
         .catch(err => console.error('Error writing to CSV:', err));
-      
-      // Log the first transaction in each batch
-      if (index === 0) {
-        console.log('First transaction in batch:', JSON.stringify(transaction, null, 2));
-      }
     });
   } else if (data.type === 'info' || data.type === 'error') {
-    const logEntry = {
-      layer: '',
-      from_address: '',
-      to_address: '',
-      value: '',
-      totalProcessed: '',
-    };
-    
     console.log(`${data.type.toUpperCase()}: ${data.message}`);
-    
-    csvWriter.writeRecords([logEntry])
-      .then(() => console.log(`${data.type} log entry written to CSV file.`))
-      .catch(err => console.error('Error writing to CSV:', err));
   }
 };
 
 eventSource.onerror = function(error) {
   console.error('EventSource failed:', error);
-  const logEntry = {
-    layer: '',
-    from_address: '',
-    to_address: '',
-    value: '',
-    totalProcessed: '',
-  };
-  
-  csvWriter.writeRecords([logEntry])
-    .then(() => console.log('Error log entry written to CSV file.'))
-    .catch(err => console.error('Error writing to CSV:', err));
+  eventSource.close(); // Properly close the EventSource on error
 };
+
+eventSource.onopen = function() {
+  console.log("Connection to server opened.");
+};
+
+// Add a listener for the 'end' event type which should be sent by the server
+eventSource.addEventListener('end', function() {
+  console.log('End of data stream.');
+  eventSource.close(); // Close the connection after receiving 'end' event
+});
