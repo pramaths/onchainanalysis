@@ -49,7 +49,13 @@ eventSource.onmessage = function(event) {
 
 eventSource.onerror = function(error) {
   console.error('EventSource failed:', error);
-  eventSource.close(); // Properly close the EventSource on error
+  if (error.status) {
+    console.error('HTTP status code:', error.status);
+  }
+  if (error.message) {
+    console.error('Error message:', error.message);
+  }
+  eventSource.close();
 };
 
 eventSource.onopen = function() {
@@ -57,7 +63,7 @@ eventSource.onopen = function() {
 };
 
 // Add a listener for the 'end' event type which should be sent by the server
-eventSource.addEventListener('end', function() {
+eventSource.addEventListener('close', function() {
   console.log('End of data stream.');
   eventSource.close(); // Close the connection after receiving 'end' event
 });
