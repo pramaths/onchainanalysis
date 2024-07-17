@@ -32,7 +32,7 @@ async function getAllTransactionsControllers(req, res) {
 
   try {
     const processedAddresses = new Set();
-    await processAddressLayer(rootAddress, 0, 2, processedAddresses, sendSSE);
+    await processAddressLayer(rootAddress, 0, 3, processedAddresses, sendSSE);
     console.log('Processing completed, sending close event');
 
     sendSSE({ type: "close", message: "Stream completed" });
