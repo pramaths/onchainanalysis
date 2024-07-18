@@ -9,7 +9,7 @@ const getTransactions =async(req,res)=>{
         res.json({
             results: {
                 transactions: transactions,
-                graphData: graphData
+                graphdata: graphData
             }
         });
 }
