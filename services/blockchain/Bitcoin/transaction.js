@@ -52,7 +52,7 @@ async function getAllTransactionsController(req, res) {
       const transformedTxs = transformBitcoinTransaction(tx, address);
       transformedTxs.forEach(transformedTx => {
           if (transformedTx.from_address === address && transformedTx.to_address !== address) {
-              if (transactionMap.has(transformedTx.to_address)) {
+              if (transactionMap.has(transformedTx.to_address) && transactionMap.get(transformedTx.from_address).state !== 'received') {
                   const existingTx = transactionMap.get(transformedTx.to_address);
                   existingTx.value += transformedTx.value; 
                   existingTx.state = 'sent';
@@ -75,7 +75,7 @@ async function getAllTransactionsController(req, res) {
               }
           }
           else if (transformedTx.to_address === address && transformedTx.from_address !== address) {
-              if (transactionMap.has(transformedTx.from_address)) {
+              if (transactionMap.has(transformedTx.from_address) && transactionMap.get(transformedTx.from_address).state !== 'sent') {
                   const existingTx = transactionMap.get(transformedTx.from_address);
                   existingTx.value += transformedTx.value;
                   existingTx.state = 'received';
