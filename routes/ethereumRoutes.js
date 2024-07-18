@@ -16,7 +16,7 @@ const {
 } = require("../controllers/eth/txHashController");
 
 
-router.get("/:chain/address/:address/:pagesize?", getWalletTransactions);
+router.get("/address/:address/:pagesize?", getWalletTransactions);
 router.get("/:chain/txhash/:txhash", getTransactionDetails);
 router.get("/evmchain/transactions/:address", getNormalTransactions);
 router.get("/address/:address/", getEthBalance);
