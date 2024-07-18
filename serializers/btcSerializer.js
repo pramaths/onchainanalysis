@@ -36,6 +36,7 @@ function transformBitcoinTransaction(transaction, address) {
           status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
           };
           if (tx.from_address === address || tx.to_address === address) {
+            
             transactions.push(tx);
           }
       }

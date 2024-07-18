@@ -2,6 +2,7 @@ const axios = require("axios");
 const {
   transformBitcoinTransaction,
 } = require("../../../serializers/btcSerializer");
+const {processGraphData} =  require('../../../serializers/processGraphdata')
 
 async function fetchTransactions(address, lastSeenTxId = null) {
   let allTransactions = [];
@@ -46,14 +47,36 @@ async function getAllTransactionsController(req, res) {
     }
 
     let transformedTransactions = [];
+    let transactionMap =new Map();
+    
     transactions.forEach((tx) => {
-      const transformedTx = transformBitcoinTransaction(tx, address);
-      if (transformedTx.length > 0) {
-        transformedTransactions = transformedTransactions.concat(transformedTx);
-      }
+      const transformedTxs = transformBitcoinTransaction(tx, address);
+      transformedTransactions.push(...transformedTxs); // Collect all transformed transactions
+      transformedTxs.forEach(transformedTx => {
+        if (transactionMap.has(transformedTx.address)) {
+          // If the address is already present, sum the values
+          const existingTx = transactionMap.get(transformedTx.address);
+          existingTx.value += transformedTx.value; // Assuming 'value' is a field to aggregate
+          transactionMap.set(transformedTx.address, existingTx);
+        } else {
+          // If the address is not present, add it to the map
+          transactionMap.set(transformedTx.address, transformedTx);
+        }
+      });
     });
 
-    res.status(200).json({ result: transformedTransactions });
+    const aggregatedTransactions = Array.from(transactionMap.values());
+
+    graphData = processGraphData(aggregatedTransactions, 0.1, address, "BTC");
+
+    res.status(200).json({
+      results: {
+          transactions: transformedTransactions,
+          aggregatedTransactions: aggregatedTransactions,
+          graphdata: graphData
+      }
+  });
+  
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
