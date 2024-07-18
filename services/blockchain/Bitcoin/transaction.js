@@ -46,32 +46,70 @@ async function getAllTransactionsController(req, res) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
 
-    let transformedTransactions = [];
-    let transactionMap =new Map();
-    
+    let transactionMap = new Map();
+
     transactions.forEach((tx) => {
       const transformedTxs = transformBitcoinTransaction(tx, address);
-      transformedTransactions.push(...transformedTxs); // Collect all transformed transactions
       transformedTxs.forEach(transformedTx => {
-        if (transactionMap.has(transformedTx.address)) {
-          // If the address is already present, sum the values
-          const existingTx = transactionMap.get(transformedTx.address);
-          existingTx.value += transformedTx.value; // Assuming 'value' is a field to aggregate
-          transactionMap.set(transformedTx.address, existingTx);
-        } else {
-          // If the address is not present, add it to the map
-          transactionMap.set(transformedTx.address, transformedTx);
-        }
+          if (transformedTx.from_address === address && transformedTx.to_address !== address) {
+              if (transactionMap.has(transformedTx.to_address)) {
+                  const existingTx = transactionMap.get(transformedTx.to_address);
+                  existingTx.value += transformedTx.value; 
+                  existingTx.state = 'sent';
+                  existingTx.transactions.push({
+                      block_timestamp: transformedTx.block_timestamp,
+                      value: transformedTx.value
+                  });
+                  transactionMap.set(transformedTx.to_address, existingTx);
+              } else {
+                  transactionMap.set(transformedTx.to_address, {
+                      to_address: transformedTx.to_address,
+                      from_address: address,
+                      value: transformedTx.value,
+                      state: 'sent',
+                      transactions: [{
+                          block_timestamp: transformedTx.block_timestamp,
+                          value: transformedTx.value
+                      }]
+                  });
+              }
+          }
+          else if (transformedTx.to_address === address && transformedTx.from_address !== address) {
+              if (transactionMap.has(transformedTx.from_address)) {
+                  const existingTx = transactionMap.get(transformedTx.from_address);
+                  existingTx.value += transformedTx.value;
+                  existingTx.state = 'received';
+                  existingTx.transactions.push({
+                      block_timestamp: transformedTx.block_timestamp,
+                      value: transformedTx.value
+                  }); 
+                  transactionMap.set(transformedTx.from_address, existingTx);
+              } else {
+                  transactionMap.set(transformedTx.from_address, {
+                      from_address: transformedTx.from_address,
+                      to_address: address,
+                      value: transformedTx.value,
+                      state: 'received',
+                      transactions: [{
+                          block_timestamp: transformedTx.block_timestamp,
+                          value: transformedTx.value
+                      }]
+                  });
+              }
+          }
       });
-    });
+  });
 
+    // Convert the map to arrays for the API response
+    const rawTransactions = transactions.flatMap(tx => transformBitcoinTransaction(tx, address));
+    console.log("Raw Transactions:", rawTransactions);
     const aggregatedTransactions = Array.from(transactionMap.values());
-
+    console.log("Aggregated Transactions:", aggregatedTransactions);
     graphData = processGraphData(aggregatedTransactions, 0.1, address, "BTC");
 
     res.status(200).json({
       results: {
-          transactions: transformedTransactions,
+          transactions: rawTransactions,
           aggregatedTransactions: aggregatedTransactions,
           graphdata: graphData
       }

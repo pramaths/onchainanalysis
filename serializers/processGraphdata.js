@@ -1,6 +1,7 @@
 const {CHAIN_UNITS}= require('../constants');
 
 const processGraphData = (data, threshold=null, centralNodeAddress, chain) => {
+    console.log("data", data);
     const formatAddress = (address) =>
       `${address.slice(0, 5)}...${address.slice(-5)}`;
     const processedNodes = [];
@@ -10,13 +11,16 @@ const processGraphData = (data, threshold=null, centralNodeAddress, chain) => {
 
     data.forEach((item) => {
       const valueInEth = item.value /unitFactor;
-
+        console.log("++++",item)
+        console.log("tototo",item.to_address)
+        console.log("fromfrom",item.from_address)
       if ( threshold && valueInEth < threshold) return;
 
   
       const fromAddress = item.from_address;
       const toAddress = item.to_address;
-  
+        console.log("fromAddress", fromAddress);
+        console.log("toAddress", toAddress);
       // Differentiate node IDs for duplicates
       const fromNodeID =
         fromAddress === centralNodeAddress ? fromAddress : `${fromAddress}-from`;
