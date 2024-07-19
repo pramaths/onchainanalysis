@@ -52,8 +52,9 @@ async function getAllTransactionsController(req, res) {
       const transformedTxs = transformBitcoinTransaction(tx, address);
       transformedTxs.forEach(transformedTx => {
           if (transformedTx.from_address === address && transformedTx.to_address !== address) {
-              if (transactionMap.has(transformedTx.to_address) && transactionMap.get(transformedTx.from_address).state !== 'received') {
-                  const existingTx = transactionMap.get(transformedTx.to_address);
+            const existingTx = transactionMap.get(transformedTx.to_address);
+              if (existingTx && existingTx.state !== 'received') {
+                  
                   existingTx.value += transformedTx.value; 
                   existingTx.state = 'sent';
                   existingTx.transactions.push({
@@ -75,8 +76,9 @@ async function getAllTransactionsController(req, res) {
               }
           }
           else if (transformedTx.to_address === address && transformedTx.from_address !== address) {
-              if (transactionMap.has(transformedTx.from_address) && transactionMap.get(transformedTx.from_address).state !== 'sent') {
-                  const existingTx = transactionMap.get(transformedTx.from_address);
+            const existingTx = transactionMap.get(transformedTx.from_address);
+              if (existingTx && existingTx.state !== 'sent') {
+                 
                   existingTx.value += transformedTx.value;
                   existingTx.state = 'received';
                   existingTx.transactions.push({
@@ -105,6 +107,7 @@ async function getAllTransactionsController(req, res) {
     console.log("Raw Transactions:", rawTransactions);
     const aggregatedTransactions = Array.from(transactionMap.values());
     console.log("Aggregated Transactions:", aggregatedTransactions);
+
     graphData = processGraphData(aggregatedTransactions, 0.1, address, "BTC");
 
     res.status(200).json({
