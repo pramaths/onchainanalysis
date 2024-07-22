@@ -1,8 +1,10 @@
 const EventSource = require('eventsource');
+const { Graph } = require('redis');
+const { aggregateTransactions } = require('./services/aggregationService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const address = 'bc1qhg7fpzxl68m2g5l0ane9h9akw4hfnh2s8hn3gm';
-const eventSource = new EventSource(`http://localhost:8000/api/btc/trace/transactions/${address}`);
+const eventSource = new EventSource(`http://localhost:8000/api/btc/stream/transactions/${address}`);
 
 // Initialize CSV writer
 const csvWriter = createCsvWriter({
@@ -13,6 +15,8 @@ const csvWriter = createCsvWriter({
     { id: 'to_address', title: 'TO_ADDRESS' },
     { id: 'value', title: 'VALUE' },
     { id: 'totalProcessed', title: 'TOTAL_PROCESSED' },
+    { id: 'GraphData', title: 'GRAPH_DATA' },
+    { id: 'aggregatedTransactions', title: 'AGGREGATED_TRANSACTIONS' },
   ]
 });
 
@@ -30,6 +34,8 @@ eventSource.onmessage = function(event) {
         value: transaction.value / 100000000, // Convert from satoshi to BTC
         txid: transaction.txid,
         totalProcessed: data.totalProcessed,
+        GraphData:JSON.stringify( data.graphData),
+        aggregatedTransactions:JSON.stringify(data.aggregatedTransactions)
       };
 
       // Log first transaction in each batch for visibility

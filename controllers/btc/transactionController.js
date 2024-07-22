@@ -9,6 +9,8 @@ const {
 const {
   transformBitcoinTransaction,
 } = require("../../serializers/btcSerializer");
+const {processGraphData} = require('../../serializers/processGraphdata');
+const {aggregateTransactions} =require('../../services/aggregationService')
 
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;
@@ -19,7 +21,7 @@ async function getAllTransactionsControllers(req, res) {
   });
 
   const sendSSE = (data) => {
-    console.log("Sending SSE:", JSON.stringify(data));
+    console.log("Sending SSE:");
     if (data) {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
@@ -32,7 +34,7 @@ async function getAllTransactionsControllers(req, res) {
 
   try {
     const processedAddresses = new Set();
-    await processAddressLayer(rootAddress, 0, 3, processedAddresses, sendSSE);
+    await processAddressLayer(rootAddress, 0, 2, processedAddresses, sendSSE);
     console.log('Processing completed, sending close event');
 
     sendSSE({ type: "close", message: "Stream completed" });
@@ -77,6 +79,8 @@ async function processAddressLayer(
     const transformedTransactions = transactions.flatMap((tx) =>
       transformBitcoinTransaction(tx, address)
     );
+    const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
+    const graphData = processGraphData(aggregatedTransactions, 1, address, "BTC");
     console.log(transformedTransactions);
     const filteredTransactions = transformedTransactions
       .filter((tx) => {
@@ -92,6 +96,8 @@ async function processAddressLayer(
       layerNumber: currentLayer + 1,
       address: address,
       transactions: filteredTransactions,
+      aggregateTransactions: aggregatedTransactions,
+      graphdata: graphData,
       totalProcessed: totalTransactions,
       timestamp: new Date().toISOString(),
     });
@@ -136,7 +142,8 @@ async function processNextLayer(
     const transformedTransactions = transactions.flatMap((tx) =>
       transformBitcoinTransaction(tx, address)
     );
-
+    const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
+    const graphData = processGraphData(aggregatedTransactions, 1, address, "BTC");
     const filteredTransactions = transformedTransactions
       .filter((tx) => {
         const btcValue = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
@@ -149,6 +156,8 @@ async function processNextLayer(
       layerNumber: currentLayer + 1,
       address: address,
       transactions: filteredTransactions,
+      aggregateTransactions: aggregatedTransactions,
+      graphdata: graphData,
       totalProcessed: filteredTransactions.length,
       timestamp: new Date().toISOString(),
     });
