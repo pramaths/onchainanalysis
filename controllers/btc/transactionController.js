@@ -9,8 +9,8 @@ const {
 const {
   transformBitcoinTransaction,
 } = require("../../serializers/btcSerializer");
-const {processGraphData} = require('../../serializers/processGraphdata');
-const {aggregateTransactions} =require('../../services/aggregationService')
+const { processGraphData } = require('../../serializers/processGraphdata');
+const { aggregateTransactions } = require('../../services/aggregationService');
 
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;
@@ -23,7 +23,7 @@ async function getAllTransactionsControllers(req, res) {
   const sendSSE = (data) => {
     console.log("Sending SSE:");
     if (data) {
-        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
   };
 
@@ -82,6 +82,7 @@ async function processAddressLayer(
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
     const graphData = processGraphData(aggregatedTransactions, 1, address, "BTC");
     console.log(transformedTransactions);
+
     const filteredTransactions = transformedTransactions
       .filter((tx) => {
         const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
