@@ -1,6 +1,6 @@
 const EventSource = require('eventsource');
 const { Graph } = require('redis');
-const { aggregateTransactions } = require('./services/aggregationService');
+const { aggregateTransactions } = require('./services/common/aggregationService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const address = 'bc1qhg7fpzxl68m2g5l0ane9h9akw4hfnh2s8hn3gm';
@@ -31,7 +31,7 @@ eventSource.onmessage = function(event) {
         layer: data.layerNumber,
         from_address: transaction.from_address,
         to_address: transaction.to_address,
-        value: transaction.value / 100000000, // Convert from satoshi to BTC
+        value: transaction.value / 100000000, 
         txid: transaction.txid,
         totalProcessed: data.totalProcessed,
         GraphData:JSON.stringify( data.graphData),

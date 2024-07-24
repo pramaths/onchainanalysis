@@ -3,7 +3,7 @@ const {
   transformBitcoinTransaction,
 } = require("../../../serializers/btcSerializer");
 const {processGraphData} =  require('../../../serializers/processGraphdata')
-const {aggregateTransactions} = require('../../aggregationService');
+const {aggregateTransactions} = require('../../common/aggregationService');
 
 async function fetchTransactions(address, lastSeenTxId = null) {
   let allTransactions = [];

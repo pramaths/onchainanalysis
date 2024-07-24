@@ -10,7 +10,7 @@ const {
   transformBitcoinTransaction,
 } = require("../../serializers/btcSerializer");
 const { processGraphData } = require('../../serializers/processGraphdata');
-const { aggregateTransactions } = require('../../services/aggregationService');
+const { aggregateTransactions } = require('../../services/common/aggregationService');
 
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;
@@ -72,7 +72,7 @@ async function processAddressLayer(
   let totalTransactions = 0;
   const uniqueAddresses = new Set();
 
-  while (totalTransactions < 250) {
+  while (totalTransactions < 100) {
     const transactions = await getNormalTransactions(address, lastSeenTxId);
     if (transactions.length === 0) break;
 
@@ -189,4 +189,44 @@ async function processNextLayer(
   }
 }
 
-module.exports = { getAllTransactionsControllers };
+async function getOutgoingTransactions(req, res) {
+  const baseAddress = req.params.address;
+  
+  try {
+    let lastSeenTxId = null;
+    const outgoingTransactions = [];
+
+    while (true && outgoingTransactions.length < 100) {
+      const transactions = await getNormalTransactions(baseAddress, lastSeenTxId);
+      if (transactions.length === 0) break;
+
+      const transformedTransactions = transactions.flatMap((tx) =>
+        transformBitcoinTransaction(tx, baseAddress)
+      );
+
+      const filteredTransactions = transformedTransactions
+        .filter((tx) => {
+          const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
+          return value >= MIN_BTC_VALUE && tx.from_address === baseAddress;
+        })
+        .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+
+      outgoingTransactions.push(...filteredTransactions);
+
+      lastSeenTxId = transactions[transactions.length - 1].txid;
+    }
+
+    res.status(200).json({
+      address: baseAddress,
+      transactions: outgoingTransactions,
+      totalProcessed: outgoingTransactions.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Error in getOutgoingTransactions:', error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+module.exports = { getAllTransactionsControllers, getOutgoingTransactions};
