@@ -74,7 +74,7 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
         target: toNodeID,
         targetHandle: `${toNodeID}-t`,
         label: `${valueInChain.toFixed(4)} ${chain.toLowerCase()}`,
-        animated: true,
+        // animated: true,
         style: { stroke: edgeColor, strokeWidth: edgeWidth },
       });
     }

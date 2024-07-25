@@ -12,6 +12,11 @@ const {
 const { processGraphData } = require('../../serializers/processGraphdata');
 const { aggregateTransactions } = require('../../services/common/aggregationService');
 
+
+const MAX_LAYERS = 2;
+const MAX_TRANSACTIONS = 100;
+const THRESHOLD = 1;
+
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;
   res.writeHead(200, {
@@ -21,7 +26,6 @@ async function getAllTransactionsControllers(req, res) {
   });
 
   const sendSSE = (data) => {
-    console.log("Sending SSE:");
     if (data) {
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
@@ -31,10 +35,13 @@ async function getAllTransactionsControllers(req, res) {
     type: "info",
     message: "Starting multi-layer transaction stream...",
   });
+  
 
   try {
+    console.time('processAddressLayer');
     const processedAddresses = new Set();
-    await processAddressLayer(rootAddress, 0, 2, processedAddresses, sendSSE);
+    await processAddressLayer(rootAddress, 0, MAX_LAYERS, processedAddresses, sendSSE);
+    console.timeEnd('processAddressLayer');
     console.log('Processing completed, sending close event');
 
     sendSSE({ type: "close", message: "Stream completed" });
@@ -62,7 +69,8 @@ async function processAddressLayer(
     return;
   }
 
-  processedAddresses.add(address);
+  processedAddresses.add(address);   // add to maintain a set of processed addresses
+
   sendSSE({
     type: "info",
     message: `Processing layer ${currentLayer + 1}, address: ${address}`,
@@ -72,7 +80,7 @@ async function processAddressLayer(
   let totalTransactions = 0;
   const uniqueAddresses = new Set();
 
-  while (totalTransactions < 100) {
+  while (totalTransactions < MAX_TRANSACTIONS) {
     const transactions = await getNormalTransactions(address, lastSeenTxId);
     if (transactions.length === 0) break;
 
@@ -80,10 +88,10 @@ async function processAddressLayer(
       transformBitcoinTransaction(tx, address)
     );
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
-    const graphData = processGraphData(aggregatedTransactions, 1, address, "BTC");
-    console.log(transformedTransactions);
+    const graphData = processGraphData(aggregatedTransactions, THRESHOLD, address, "BTC");
+    console.log(aggregatedTransactions);
 
-    const filteredTransactions = transformedTransactions
+    const filteredTransactions = transformedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
       .filter((tx) => {
         const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
         return value >= MIN_BTC_VALUE;
@@ -103,7 +111,7 @@ async function processAddressLayer(
       timestamp: new Date().toISOString(),
     });
 
-    filteredTransactions.forEach((tx) => {
+    filteredTransactions.forEach((tx) => {             // remove this logic also put it in aggregationService 
       if (tx.from_address !== address) uniqueAddresses.add(tx.from_address);
       if (tx.to_address !== address) uniqueAddresses.add(tx.to_address);
     });

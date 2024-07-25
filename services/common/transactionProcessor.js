@@ -20,7 +20,7 @@ const processAddressLayer = async (address, currentLayer, maxLayers, processedAd
 
     const transformedTransactions = transactions.flatMap(tx => transformBitcoinTransaction(tx, address));
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
-    const graphData = processGraphData(aggregatedTransactions, 1, address, chain);
+    const graphData = processGraphData(aggregatedTransactions, 0, address, chain);
 
     const filteredTransactions = filterAndSortTransactions(transformedTransactions, address);
 
