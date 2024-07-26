@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getTransactions,
+  getTransactions,getAllTransactionsControllers
 } = require("../controllers/eth/transactionController");
 const {
   getBalance,
@@ -16,7 +16,8 @@ const {
 } = require("../controllers/eth/txHashController");
 
 
-router.get("/address/:address/:pagesize?", getTransactions);
+router.get("/:chain/address/:address/:pagesize?", getTransactions);
+router.get("/:chain/stream/transactions/:address", getAllTransactionsControllers);
 router.get("/:chain/txhash/:txhash", getTransactionDetails);
 router.get("/evmchain/transactions/:address", getNormalTransactions);
 router.get("/address/:address/", getEthBalance);

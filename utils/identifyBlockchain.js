@@ -120,4 +120,36 @@ function identifyBlockchainByHash(hash) {
 }
 
 
-module.exports = {  identifyBlockchain, identifyBlockchainByHash };
+function identifyEVMchain(chain) {
+    let result = {
+        chainID: ''
+    };
+
+    if (chain === "ETH") {
+        result = {
+            blockchain: 'Ethereum',
+            network: 'ETH_MAINNET',
+            chainID: '0x1'
+        };
+    }
+    if (chain === "BSC") {
+        result = {
+            blockchain: 'Binance Smart Chain',
+            network: 'BSC_MAINNET',
+            chainID: '0x38'
+        };
+    }
+    if (chain === "MATIC") {
+        result = {
+            blockchain: 'Polygon',
+            network: 'MATIC_MAINNET',
+            chainID: '0x89'
+        };
+    }
+
+return result.chainID;
+}
+
+
+
+module.exports = {  identifyBlockchain, identifyBlockchainByHash ,identifyEVMchain };

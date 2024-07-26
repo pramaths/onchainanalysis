@@ -6,7 +6,7 @@ const ethRoutes = require("./ethereumRoutes");
 const commonRoutes = require("./commonRoutes");
 
 router.use('/btc', btcRoutes);
-router.use('/eth', ethRoutes);
+router.use('/', ethRoutes);
 router.use('/crypto', commonRoutes);
 
 module.exports = router;

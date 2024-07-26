@@ -5,6 +5,7 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
   const formatAddress = (address) =>
     `${address.slice(0, 5)}...${address.slice(-5)}`;
   
+  
   const processedNodesMap = new Map();
   const processedEdges = [];
   const unitFactor = CHAIN_UNITS[chain.toLowerCase()];
