@@ -32,6 +32,28 @@ const getTransactions =async(req,res)=>{
         res.status(500).send({error:"An error occurred while fetching transactions"});
     }
 }
+const getOutgoingTransactions =async(req,res)=>{
+    try{
+        const {address, chain} = req.params;
+        let formattedChain = chain.toUpperCase();
+        
+        const transactions = await getWalletTransactions(address, formattedChain);
+        const aggregatedTransactions = aggregateTransactions(transactions, address);
+        const outgoingTransactions = transactions.filter(tx => tx.from_address === address);
+        const graphData = processGraphData(outgoingTransactions,0, address, formattedChain);
+        res.json({
+            results: {
+                transactions: transactions,
+                aggregateTransactions: aggregatedTransactions,
+                graphdata: graphData
+            }
+        });
+}
+    catch(e){
+        console.error(e);
+        res.status(500).send({error:"An error occurred while fetching transactions"});
+    }
+}
 
   
 async function getAllTransactionsControllers(req, res) {
@@ -216,4 +238,4 @@ async function getAllTransactionsControllers(req, res) {
     }
   }
   
-module.exports = {getTransactions, getAllTransactionsControllers};
+module.exports = {getTransactions, getAllTransactionsControllers, getOutgoingTransactions};

@@ -20,7 +20,7 @@ const getWalletTransactions = async (address, chain) => {
       if(cursor){
 
       const chainID =   chain ? identifyEVMchain(chain) : '0x1';
-            pagesize = 100;
+      const pagesize = 100;
       const response = await Moralis.EvmApi.transaction.getWalletTransactions({
         chain: chainID || chain,
         address,
@@ -35,7 +35,7 @@ const getWalletTransactions = async (address, chain) => {
     }
     else{
       const chainID =   chain ? identifyEVMchain(chain) : '0x1';
-            pagesize = 100;
+      const pagesize = 100;
       const response = await Moralis.EvmApi.transaction.getWalletTransactions({
         chain: chainID || chain,
         address,
