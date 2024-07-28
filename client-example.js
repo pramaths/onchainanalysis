@@ -26,7 +26,7 @@ eventSource.onmessage = function(event) {
   if (data.type === 'transactions') {
     console.log(`Processing transactions for layer ${data.layerNumber}`);
     
-    data.transactions.forEach((transaction, index) => {
+    data.aggregateTransactions.forEach((transaction, index) => {
       const logEntry = {
         layer: data.layerNumber,
         from_address: transaction.from_address,

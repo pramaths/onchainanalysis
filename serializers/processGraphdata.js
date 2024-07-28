@@ -1,8 +1,9 @@
 const { CHAIN_UNITS } = require('../constants');
 
 const processGraphData = (data, threshold = null, centralNodeAddress, chain) => {
-  const formatAddress = (address) =>
-    `${address.slice(0, 5)}...${address.slice(-5)}`;
+  // const formatAddress = (address) =>
+  //   `${address.slice(0, 5)}...${address.slice(-5)}`;
+      // return address
   
   
   const processedNodesMap = new Map();
@@ -47,7 +48,7 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
         id: toNodeID,
         name: toAddress,
         data: {
-          label: formatAddress(toAddress),
+          label: (toAddress),
           sourceHandles: [{ id: `${toNodeID}-s` }],
           targetHandles: [{ id: `${toNodeID}-t` }],
         },

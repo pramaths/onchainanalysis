@@ -87,25 +87,25 @@ async function processAddressLayer(
     const transformedTransactions = transactions.flatMap((tx) =>
       transformBitcoinTransaction(tx, address)
     );
+    
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
-    const graphData = processGraphData(aggregatedTransactions, THRESHOLD, address, "BTC");
+    const filteredTransactions = aggregatedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
+    .filter((tx) => {
+      const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
+      return value >= MIN_BTC_VALUE;
+    })
+    .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+    const graphData = processGraphData(filteredTransactions, THRESHOLD, address, "BTC");
     console.log(aggregatedTransactions);
 
-    const filteredTransactions = transformedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
-      .filter((tx) => {
-        const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
-        return value >= MIN_BTC_VALUE;
-      })
-      .sort((a, b) => parseInt(b.value) - parseInt(a.value));
-
-    totalTransactions += filteredTransactions.length;
-
+    totalTransactions += transactions.length;
+      console.log('aggregatedTransactions', aggregatedTransactions);
     sendSSE({
       type: "transactions",
       layerNumber: currentLayer + 1,
       address: address,
-      transactions: filteredTransactions,
-      aggregateTransactions: aggregatedTransactions,
+      transactions: aggregatedTransactions,
+      aggregateTransactions: filteredTransactions,
       graphdata: graphData,
       totalProcessed: totalTransactions,
       timestamp: new Date().toISOString(),
@@ -152,20 +152,21 @@ async function processNextLayer(
       transformBitcoinTransaction(tx, address)
     );
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
-    const graphData = processGraphData(aggregatedTransactions, 1, address, "BTC");
-    const filteredTransactions = transformedTransactions
+    const filteredTransactions = aggregatedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
       .filter((tx) => {
         const btcValue = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
         return btcValue >= MIN_BTC_VALUE;
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+    const graphData = processGraphData(filteredTransactions, 1, address, "BTC");
+    
 
     sendSSE({
       type: "transactions",
       layerNumber: currentLayer + 1,
       address: address,
-      transactions: filteredTransactions,
-      aggregateTransactions: aggregatedTransactions,
+      transactions: aggregatedTransactions,
+      aggregateTransactions: filteredTransactions,
       graphdata: graphData,
       totalProcessed: filteredTransactions.length,
       timestamp: new Date().toISOString(),
