@@ -37,7 +37,7 @@ app.use(compression());
 // );
 
 // Middleware setup
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 30000 // Increase timeout to 30 seconds

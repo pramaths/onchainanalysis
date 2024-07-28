@@ -17,13 +17,17 @@ const getTransactions =async(req,res)=>{
     try{
         const {address, chain} = req.params;
         console.log("gettransaction");
+        console.log("pramath")
         let formattedChain = chain.toUpperCase();
         
         const transactions = await getWalletTransactions(address, formattedChain);
+        const aggregatedTransactions = aggregateTransactions(transactions, address);
         const graphData = processGraphData(transactions,0, address, formattedChain);
+        console.log(transactions)
         res.json({
             results: {
-                transactions: transactions,
+              transactions: transactions,
+                aggregatedTransactions: aggregatedTransactions,
                 graphdata: graphData
             }
         });
