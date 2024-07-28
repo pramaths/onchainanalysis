@@ -1,7 +1,6 @@
 const { CHAIN_UNITS } = require('../constants');
 
 const processGraphData = (data, threshold = null, centralNodeAddress, chain) => {
-  console.log("data", data);
   const formatAddress = (address) =>
     `${address.slice(0, 5)}...${address.slice(-5)}`;
   

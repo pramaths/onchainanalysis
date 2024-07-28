@@ -2,7 +2,7 @@ function moralisSerializer(data) {
     const dataArray = Array.isArray(data) ? data : [data];
 
     return dataArray.map(item => ({
-        transactionHash: item.hash,
+        block_hash: item.hash,
         from_address: item.from_address || item.from,
         to_address: item.to_address || item.to,
         value: item.value,

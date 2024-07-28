@@ -30,7 +30,6 @@ const getWalletTransactions = async (address, chain) => {
       });
       cursor = response.pagination.cursor;
       formattedData = moralisSerializer(response.raw.result);
-      console.log("formattedData",formattedData)
       return formattedData;
     }
     else{
@@ -44,7 +43,6 @@ const getWalletTransactions = async (address, chain) => {
       });
       cursor = response.pagination.cursor;
       formattedData = moralisSerializer(response.raw.result);
-      console.log("formattedData",formattedData)
       return formattedData;
     }
 

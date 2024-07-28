@@ -23,7 +23,6 @@ const getTransactions =async(req,res)=>{
         const transactions = await getWalletTransactions(address, formattedChain);
         const aggregatedTransactions = aggregateTransactions(transactions, address);
         const graphData = processGraphData(transactions,0, address, formattedChain);
-        console.log(transactions)
         res.json({
             results: {
               transactions: transactions,
