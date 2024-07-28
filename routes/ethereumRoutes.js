@@ -21,6 +21,6 @@ router.get("/:chain/stream/transactions/:address", getAllTransactionsControllers
 router.get("/:chain/txhash/:txhash", getTransactionDetails);
 router.get("/evmchain/transactions/:address", getNormalTransactions);
 router.get("/address/:address/", getEthBalance);
-router.get("/:chain/outgoing/:address", getOutgoingTransactions);
+router.get("/:chain/address/:address/outgoing", getOutgoingTransactions);
 
 module.exports = router;

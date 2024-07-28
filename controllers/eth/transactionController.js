@@ -16,6 +16,7 @@ const {
 const getTransactions =async(req,res)=>{
     try{
         const {address, chain} = req.params;
+        console.log("gettransaction");
         let formattedChain = chain.toUpperCase();
         
         const transactions = await getWalletTransactions(address, formattedChain);
