@@ -27,7 +27,7 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
         id: fromNodeID,
         name: fromAddress,
         data: {
-          label: formatAddress(fromAddress),
+          label: (fromAddress),
           sourceHandles: [{ id: `${fromNodeID}-s` }],
           targetHandles: [{ id: `${fromNodeID}-t` }],
         },
