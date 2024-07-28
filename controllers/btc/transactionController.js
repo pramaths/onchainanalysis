@@ -15,7 +15,6 @@ const { aggregateTransactions } = require('../../services/common/aggregationServ
 
 const MAX_LAYERS = 2;
 const MAX_TRANSACTIONS = 100;
-const THRESHOLD = 1;
 
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;

@@ -152,6 +152,8 @@ async function processAddressLayer(
 
     const chain = formattedChain.toLowerCase();
     const minValueKey = `MIN_${chain.toUpperCase()}_VALUE`;
+console.log("MIN_VALUE_FOR_CHAIN", CHAIN_UNITS[chain].MIN_VALUE);
+console.log("MIN_VALUE_KEY", minValueKey);
 
     const transformedTransactions = transactions;
     const aggregatedTransactions = aggregateTransactions(
@@ -162,6 +164,7 @@ async function processAddressLayer(
     const filteredTransactions = aggregatedTransactions
       .filter((tx) => {
         const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
+        console.log("VALUE  Pramath", value);
         return value >= CHAIN_UNITS[chain][minValueKey];
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
@@ -229,10 +232,10 @@ async function processNextLayer(
     );
     const chain = formattedChain.toLowerCase();
     const minValueKey = `MIN_${chain.toUpperCase()}_VALUE`;
-    console.log("MIN_VALUE_FOR_CHAIN", CHAIN_UNITS[chain][MIN_VALUE]);
+    console.log("MIN_VALUE_FOR_CHAIN", CHAIN_UNITS[chain].MIN_VALUE);
     const filteredTransactions = aggregatedTransactions
       .filter((tx) => {
-        const value = parseInt(tx.value) / CHAIN_UNITS[chain][MIN_VALUE];
+        const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
         return value >= CHAIN_UNITS[chain][minValueKey];
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));

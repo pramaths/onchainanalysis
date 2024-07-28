@@ -1,4 +1,5 @@
 const { CHAIN_UNITS } = require('../constants');
+const {formatNumber} = require('../utils/unitFormatter');
 
 const processGraphData = (data, centralNodeAddress, chain) => {
   // const formatAddress = (address) =>
@@ -12,6 +13,7 @@ const processGraphData = (data, centralNodeAddress, chain) => {
   data.forEach((item) => {
     console.log('item', item.value);
     const valueInchain = parseInt(item.value).toFixed(4);
+    const formattedValue = formatNumber(valueInchain, chain);
 
     const fromAddress = item.from_address;
     const toAddress = item.to_address;
@@ -73,7 +75,7 @@ const processGraphData = (data, centralNodeAddress, chain) => {
         sourceHandle: `${fromNodeID}-s`,
         target: toNodeID,
         targetHandle: `${toNodeID}-t`,
-        label: `${valueInchain} ${chain.toLowerCase()}`,
+        label: formattedValue,
         // animated: true,
         style: { stroke: edgeColor, strokeWidth: edgeWidth },
       });
