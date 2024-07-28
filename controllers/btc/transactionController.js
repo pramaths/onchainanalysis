@@ -95,11 +95,12 @@ async function processAddressLayer(
       return value >= MIN_BTC_VALUE;
     })
     .sort((a, b) => parseInt(b.value) - parseInt(a.value));
-    const graphData = processGraphData(filteredTransactions, THRESHOLD, address, "BTC");
+    const graphData = processGraphData(filteredTransactions, address, "BTC");
     console.log(aggregatedTransactions);
 
     totalTransactions += transactions.length;
       console.log('aggregatedTransactions', aggregatedTransactions);
+      console.log('graphData', graphData);
     sendSSE({
       type: "transactions",
       layerNumber: currentLayer + 1,
@@ -158,7 +159,7 @@ async function processNextLayer(
         return btcValue >= MIN_BTC_VALUE;
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
-    const graphData = processGraphData(filteredTransactions, 1, address, "BTC");
+    const graphData = processGraphData(filteredTransactions, address, "BTC");
     
 
     sendSSE({

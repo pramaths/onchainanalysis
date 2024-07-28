@@ -22,7 +22,6 @@ const getTransactions = async (req, res) => {
     const aggregatedTransactions = aggregateTransactions(transactions, address);
     const graphData = processGraphData(
       transactions,
-      0,
       address,
       formattedChain
     );
@@ -52,7 +51,6 @@ const getOutgoingTransactions = async (req, res) => {
     );
     const graphData = processGraphData(
       outgoingTransactions,
-      0,
       address,
       formattedChain
     );
@@ -169,7 +167,6 @@ async function processAddressLayer(
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
     const graphData = processGraphData(
       filteredTransactions,
-      THRESHOLD,
       address,
       formattedChain
     );
@@ -241,7 +238,6 @@ async function processNextLayer(
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
     const graphData = processGraphData(
       filteredTransactions,
-      1,
       address,
       formattedChain
     );

@@ -1,6 +1,6 @@
 const { CHAIN_UNITS } = require('../constants');
 
-const processGraphData = (data, threshold = null, centralNodeAddress, chain) => {
+const processGraphData = (data, centralNodeAddress, chain) => {
   // const formatAddress = (address) =>
   //   `${address.slice(0, 5)}...${address.slice(-5)}`;
       // return address
@@ -8,11 +8,10 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
   
   const processedNodesMap = new Map();
   const processedEdges = [];
-  const unitFactor = CHAIN_UNITS[chain.toLowerCase()];
 
   data.forEach((item) => {
-    const valueInChain = item.value / unitFactor;
-    if (threshold && valueInChain < threshold) return;
+    console.log('item', item.value);
+    const valueInchain = parseInt(item.value).toFixed(4);
 
     const fromAddress = item.from_address;
     const toAddress = item.to_address;
@@ -74,7 +73,7 @@ const processGraphData = (data, threshold = null, centralNodeAddress, chain) => 
         sourceHandle: `${fromNodeID}-s`,
         target: toNodeID,
         targetHandle: `${toNodeID}-t`,
-        label: `${valueInChain.toFixed(4)} ${chain.toLowerCase()}`,
+        label: `${valueInchain} ${chain.toLowerCase()}`,
         // animated: true,
         style: { stroke: edgeColor, strokeWidth: edgeWidth },
       });
