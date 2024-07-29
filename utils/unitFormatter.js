@@ -6,7 +6,7 @@ function formatNumber(value, chain) {
   } else if (value >= 1e3) {
     return (value / 1e3).toFixed(1) + "K " + chain; // Thousand
   } else {
-    return value; // Less than thousand
+    return value + " " + chain; // Less than thousand
   }
 }
 
