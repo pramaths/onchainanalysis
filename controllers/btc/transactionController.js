@@ -13,7 +13,7 @@ const { processGraphData } = require('../../serializers/processGraphdata');
 const { aggregateTransactions } = require('../../services/common/aggregationService');
 
 
-const MAX_LAYERS = 2;
+const MAX_LAYERS = 3;
 const MAX_TRANSACTIONS = 100;
 
 async function getAllTransactionsControllers(req, res) {
@@ -91,9 +91,9 @@ async function processAddressLayer(
     console.log('aggregatedTransactions', aggregatedTransactions);
     const filteredTransactions = aggregatedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
     .filter((tx) => {
+      console.log('tx.value', tx.value);
       return tx.value >= MIN_BTC_VALUE;
     })
-    .sort((a, b) => parseInt(b.value) - parseInt(a.value));
     console.log('filteredTransactions', filteredTransactions);
     const graphData = processGraphData(filteredTransactions, address, "BTC");
     console.log(aggregatedTransactions);
@@ -155,11 +155,12 @@ async function processNextLayer(
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
     const filteredTransactions = aggregatedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
       .filter((tx) => {
-        const btcValue = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
+        const btcValue = (tx.value) ;
         return btcValue >= MIN_BTC_VALUE;
       })
-      .sort((a, b) => parseInt(b.value) - parseInt(a.value));
-    const graphData = processGraphData(filteredTransactions, address, "BTC");
+      const filtered = filteredTransactions.filter((tx)=>tx.from_address === address);
+    const graphData = processGraphData(filtered, address, "BTC");
+   
     
 
     sendSSE({
@@ -216,10 +217,10 @@ async function getOutgoingTransactions(req, res) {
 
       const filteredTransactions = transformedTransactions
         .filter((tx) => {
-          const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
+          const value = (tx.value);
           return value >= MIN_BTC_VALUE && tx.from_address === baseAddress;
         })
-        .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+        .sort((a, b) => (b.value) - (a.value));
 
       outgoingTransactions.push(...filteredTransactions);
 
