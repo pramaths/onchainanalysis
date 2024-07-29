@@ -62,7 +62,7 @@ function transformBitcoinTransaction(transaction, address) {
                 : "",
               from_address: input.prevout.scriptpubkey_address || "",
               to_address: output.scriptpubkey_address || "",
-              value: output.value,
+              value: output.value / SATOSHI_PER_BITCOIN || "",
               txid: transaction.txid || "",
               status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
             };
