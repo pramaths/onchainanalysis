@@ -21,7 +21,7 @@ const CHAIN_UNITS = {
         name: "Matic",
         symbol: "MATIC",
         MIN_VALUE: 1e18,
-        MIN_MATIC_VALUE: 1000
+        MIN_MATIC_VALUE: 1
     },
     trx:{
         name: "Tron",
