@@ -33,6 +33,7 @@ async function getAllTransactionsController(req, res) {
     // Convert the map to arrays for the API response
     const rawTransactions = transactions.flatMap(tx => transformBitcoinTransaction(tx, address));
     const aggregatedTransactions = aggregateTransactions(rawTransactions, address);
+    console.log("Aggregated Transactions:", aggregatedTransactions);
     const filteredTransactions = aggregatedTransactions.filter((tx)=> tx.value >= 0.01).sort((a, b) => b.value - a.value);
     const graphData = processGraphData(filteredTransactions, address, "BTC");
     console.log("Graph Data:", graphData);

@@ -163,9 +163,8 @@ console.log("MIN_VALUE_KEY", minValueKey);
 
     const filteredTransactions = aggregatedTransactions
       .filter((tx) => {
-        const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
-        console.log("VALUE  Pramath", value);
-        return value >= CHAIN_UNITS[chain][minValueKey];
+        // const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
+        return tx.value >= CHAIN_UNITS[chain][minValueKey];
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));
     const graphData = processGraphData(
@@ -235,7 +234,7 @@ async function processNextLayer(
     console.log("MIN_VALUE_FOR_CHAIN", CHAIN_UNITS[chain].MIN_VALUE);
     const filteredTransactions = aggregatedTransactions
       .filter((tx) => {
-        const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
+        // const value = parseInt(tx.value) / CHAIN_UNITS[chain].MIN_VALUE;
         return value >= CHAIN_UNITS[chain][minValueKey];
       })
       .sort((a, b) => parseInt(b.value) - parseInt(a.value));

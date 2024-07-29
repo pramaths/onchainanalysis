@@ -1,6 +1,6 @@
 const BATCH_SIZE = 50;
 const BATCH_DELAY = 5000; 
-const MIN_BTC_VALUE = 1;
+const MIN_BTC_VALUE = 0.0001;
 const WEI_PER_ETHER = 10 ** 18;
 const SATOSHI_PER_BITCOIN = 10 ** 8;
 

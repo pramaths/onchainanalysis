@@ -3,7 +3,7 @@ const { Graph } = require('redis');
 const { aggregateTransactions } = require('./services/common/aggregationService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-const address = 'bc1qhg7fpzxl68m2g5l0ane9h9akw4hfnh2s8hn3gm';
+const address = 'bc1qch6z8xgj9v86avvj63mddpva35klwh7rd6l78l';
 const eventSource = new EventSource(`http://localhost:8000/api/btc/stream/transactions/${address}`);
 
 // Initialize CSV writer
@@ -25,7 +25,7 @@ eventSource.onmessage = function(event) {
   
   if (data.type === 'transactions') {
     console.log(`Processing transactions for layer ${data.layerNumber}`);
-    
+    console.log(JSON.stringify(data))
     data.aggregateTransactions.forEach((transaction, index) => {
       const logEntry = {
         layer: data.layerNumber,
@@ -34,9 +34,10 @@ eventSource.onmessage = function(event) {
         value: transaction.value / 100000000, 
         txid: transaction.txid,
         totalProcessed: data.totalProcessed,
-        GraphData:JSON.stringify( data.graphData),
+        GraphData:JSON.stringify(data.graphData),
         aggregatedTransactions:JSON.stringify(data.aggregatedTransactions)
       };
+      console.log(data.graphData)
 
       // Log first transaction in each batch for visibility
       if (index === 0) {

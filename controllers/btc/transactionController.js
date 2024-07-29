@@ -88,12 +88,13 @@ async function processAddressLayer(
     );
     
     const aggregatedTransactions = aggregateTransactions(transformedTransactions, address);
+    console.log('aggregatedTransactions', aggregatedTransactions);
     const filteredTransactions = aggregatedTransactions   // remove this logic put it in aggregationService and do filtering and sorting in aggregationService
     .filter((tx) => {
-      const value = parseInt(tx.value) / SATOSHI_PER_BITCOIN;
-      return value >= MIN_BTC_VALUE;
+      return tx.value >= MIN_BTC_VALUE;
     })
     .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+    console.log('filteredTransactions', filteredTransactions);
     const graphData = processGraphData(filteredTransactions, address, "BTC");
     console.log(aggregatedTransactions);
 

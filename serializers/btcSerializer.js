@@ -1,3 +1,9 @@
+const {
+  BATCH_DELAY,
+  MIN_BTC_VALUE,
+  SATOSHI_PER_BITCOIN,
+} = require("../constants");
+
 function transformBitcoinTransaction(transaction, address) {
   const transactions = [];
   if (!transaction.vin) {
@@ -11,7 +17,7 @@ function transformBitcoinTransaction(transaction, address) {
           : "",
         from_address: transaction.prevout.scriptpubkey_address,
         to_address: address,
-        value: transaction.vout[0].value || "",
+        value: transaction.vout[0].value / SATOSHI_PER_BITCOIN || "",
         txid: transaction.txid || "",
         status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
       };
@@ -31,7 +37,7 @@ function transformBitcoinTransaction(transaction, address) {
             : "",
           from_address: input.prevout.scriptpubkey_address  || "",
           to_address: address ,
-          value: input.prevout.value || "",
+          value: input.prevout.value / SATOSHI_PER_BITCOIN|| "",
           txid: transaction.txid || "",
           status: transaction.status.confirmed ? "confirmed" : "unconfirmed",
           };

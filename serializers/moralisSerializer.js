@@ -5,7 +5,7 @@ function moralisSerializer(data) {
         block_hash: item.hash,
         from_address: item.from_address || item.from,
         to_address: item.to_address || item.to,
-        value: item.value,
+        value: item.value / 1e18,
         timestamp: new Date(item.block_timestamp),
         nonce: item.nonce || item.nonce,
         blockNumber: item.block_number || item.blockNumber,
