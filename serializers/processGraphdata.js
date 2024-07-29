@@ -12,9 +12,10 @@ const processGraphData = (data, centralNodeAddress, chain) => {
 
   data.forEach((item) => {
     console.log('item', item.value);
-    const valueInchain = parseInt(item.value).toFixed(4);
+    const valueInchain = (item.value).toFixed(4);
+    console.log('valueInchain', valueInchain);
     const formattedValue = formatNumber(valueInchain, chain);
-
+    console.log('formattedValue', formattedValue);
     const fromAddress = item.from_address;
     const toAddress = item.to_address;
 
