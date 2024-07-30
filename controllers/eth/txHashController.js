@@ -35,7 +35,7 @@ const getTransactionDetails = async (req, res) => {
       if (response.raw) {
 
         serialized = (moralisSerializer(response.raw));
-        graphdata = processGraphData(serialized, serialized[0].from_address, response.raw.chain);
+        graphdata = processGraphData(serialized, serialized[0].from_address, "ETH");
         res.json({
           results: {
             transaction: serialized,
