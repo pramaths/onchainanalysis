@@ -166,14 +166,15 @@ async function processAddressLayer(
 
     const filteredTransactions = aggregatedTransactions.filter((tx) => {
 
-      return tx.value >= CHAIN_UNITS[chain][minValueKey] && tx.from_address === address;
+      return tx.value >= CHAIN_UNITS[chain][minValueKey] ;
     });
+    console.log('filteredTransactions', filteredTransactions);
     const graphData = processGraphData(
       filteredTransactions,
       address,
       formattedChain
     );
-
+console.log('graphData', graphData);
     totalTransactions += transactions.length;
 
     sendSSE({
@@ -241,14 +242,14 @@ async function processNextLayer(
     const chain = formattedChain.toLowerCase();
     const minValueKey = `MIN_${chain.toUpperCase()}_VALUE`;
     const filteredTransactions = aggregatedTransactions.filter((tx) => {
-      return tx.value >= CHAIN_UNITS[chain][minValueKey] && tx.from_address === address;
+      return tx.value >= CHAIN_UNITS[chain][minValueKey] ;
     });
     const graphData = processGraphData(
       filteredTransactions,
       address,
       formattedChain
     );
-
+console.log('graphData', graphData);
     sendSSE({
       type: "transactions",
       layerNumber: currentLayer + 1,

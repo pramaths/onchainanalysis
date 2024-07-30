@@ -46,6 +46,8 @@ const getWalletTransactions = async (address,cursor, chain) => {
       formattedData = moralisSerializer(response.raw.result);
       formattedData.push(cursor)
       console.log("formattedData",formattedData)
+      console.log("pramath")
+      console.log('length',formattedData.length)
       return formattedData;
     }
 
