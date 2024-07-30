@@ -9,7 +9,7 @@ const {
 } = require("../../services/common/aggregationService");
 const { identifyEVMchain } = require("../../utils/identifyBlockchain");
 
-const MAX_LAYERS = 4;
+const MAX_LAYERS = 5;
 const MAX_TRANSACTIONS = 100;
 const THRESHOLD = 1;
 
@@ -24,7 +24,7 @@ const getTransactions = async (req, res) => {
       formattedChain
     );
     const aggregatedTransactions = aggregateTransactions(transactions.slice(0,-1), address);
-    const graphData = processGraphData(transactions, address, formattedChain);
+    const graphData = processGraphData(transactions.slice(0,-1), address, formattedChain);
     res.json({
       results: {
         transactions: transactions,
