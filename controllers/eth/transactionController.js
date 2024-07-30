@@ -9,7 +9,7 @@ const {
 } = require("../../services/common/aggregationService");
 const { identifyEVMchain } = require("../../utils/identifyBlockchain");
 
-const MAX_LAYERS = 2;
+const MAX_LAYERS = 4;
 const MAX_TRANSACTIONS = 100;
 const THRESHOLD = 1;
 
@@ -17,14 +17,14 @@ const getTransactions = async (req, res) => {
   try {
     const { address, chain } = req.params;
     let formattedChain = chain.toUpperCase();
-
-    const transactions = await getWalletTransactions(address, formattedChain);
-    const aggregatedTransactions = aggregateTransactions(transactions, address);
-    const graphData = processGraphData(
-      transactions,
+    console.log("formattedChain", formattedChain);
+    const transactions = await getWalletTransactions(
       address,
+      cursor,
       formattedChain
     );
+    const aggregatedTransactions = aggregateTransactions(transactions.slice(0,-1), address);
+    const graphData = processGraphData(transactions, address, formattedChain);
     res.json({
       results: {
         transactions: transactions,
@@ -44,8 +44,12 @@ const getOutgoingTransactions = async (req, res) => {
     const { address, chain } = req.params;
     let formattedChain = chain.toUpperCase();
 
-    const transactions = await getWalletTransactions(address, formattedChain);
-    const aggregatedTransactions = aggregateTransactions(transactions, address);
+    const transactions = await getWalletTransactions(
+      address,
+      cursor,
+      formattedChain
+    );
+    const aggregatedTransactions = aggregateTransactions(transactions.slice(0,-1), address);
     const outgoingTransactions = transactions.filter(
       (tx) => tx.from_address === address
     );
@@ -72,6 +76,7 @@ const getOutgoingTransactions = async (req, res) => {
 async function getAllTransactionsControllers(req, res) {
   const rootAddress = req.params.address;
   const chain = req.params.chain;
+  console.log("chain", chain);
   let formattedChain = chain.toUpperCase();
 
   res.writeHead(200, {
@@ -130,7 +135,7 @@ async function processAddressLayer(
   if (currentLayer >= maxLayers || processedAddresses.has(address)) {
     return;
   }
-
+  console.log("formattedChain", formattedChain);
   processedAddresses.add(address); // add to maintain a set of processed addresses
 
   sendSSE({
@@ -151,17 +156,18 @@ async function processAddressLayer(
     if (transactions.length === 0) break;
 
     const chain = formattedChain.toLowerCase();
+    const minValueKey = `MIN_${chain.toUpperCase()}_VALUE`;
 
-    const transformedTransactions = transactions;
+    const transformedTransactions = transactions.slice(0,-1);
     const aggregatedTransactions = aggregateTransactions(
       transformedTransactions,
       address
     );
 
-    const filteredTransactions = aggregatedTransactions
-      .filter((tx) => {
-        return tx.value >= CHAIN_UNITS[chain][minValueKey];
-      })
+    const filteredTransactions = aggregatedTransactions.filter((tx) => {
+
+      return tx.value >= CHAIN_UNITS[chain][minValueKey] && tx.from_address === address;
+    });
     const graphData = processGraphData(
       filteredTransactions,
       address,
@@ -185,7 +191,13 @@ async function processAddressLayer(
       if (tx.from_address !== address) uniqueAddresses.add(tx.from_address);
       if (tx.to_address !== address) uniqueAddresses.add(tx.to_address);
     });
-    // console.log("uniqueAddresses", uniqueAddresses);
+    cursor = transactions[transactions.length - 1].cursor;
+
+    if (cursor === null) {
+      console.log("No more transactions to fetch, stopping.");
+      break;
+    }
+    console.log("uniqueAddresses", uniqueAddresses);
 
     await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY));
   }
@@ -216,18 +228,21 @@ async function processNextLayer(
   );
 
   const processAddress = async (address) => {
-    const transactions = await getWalletTransactions(address);
-    const transformedTransactions = transactions;
+    const transactions = await getWalletTransactions(
+      address,
+      cursor = null,
+      formattedChain
+    );
+    const transformedTransactions = transactions.slice(0,-1);
     const aggregatedTransactions = aggregateTransactions(
       transformedTransactions,
       address
     );
     const chain = formattedChain.toLowerCase();
     const minValueKey = `MIN_${chain.toUpperCase()}_VALUE`;
-    const filteredTransactions = aggregatedTransactions
-      .filter((tx) => {
-        return tx.value >= CHAIN_UNITS[chain][minValueKey];
-      })
+    const filteredTransactions = aggregatedTransactions.filter((tx) => {
+      return tx.value >= CHAIN_UNITS[chain][minValueKey] && tx.from_address === address;
+    });
     const graphData = processGraphData(
       filteredTransactions,
       address,
@@ -266,7 +281,8 @@ async function processNextLayer(
       currentLayer + 1,
       maxLayers,
       processedAddresses,
-      sendSSE
+      sendSSE,
+      formattedChain
     );
   }
 }

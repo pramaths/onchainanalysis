@@ -11,15 +11,14 @@ Moralis.start({
 
 
 
-const getWalletTransactions = async (address, chain) => {
+const getWalletTransactions = async (address,cursor, chain) => {
   try {
     // const cachedData = await redisClient.get("cachedData");
     // if (!cachedData) {
       // const pagesize = parseInt(req.params.pagesize, 10) || 100;
-      let cursor = null;
+      // let cursor = null;
       if(cursor){
-
-      const chainID =   chain ? identifyEVMchain(chain) : '0x1';
+      const chainID = identifyEVMchain(chain)
       const pagesize = 100;
       const response = await Moralis.EvmApi.transaction.getWalletTransactions({
         chain: chainID || chain,
@@ -28,8 +27,9 @@ const getWalletTransactions = async (address, chain) => {
         order: "DESC",
         cursor:cursor ,
       });
-      cursor = response.pagination.cursor;
+      cursor = response.raw.cursor;
       formattedData = moralisSerializer(response.raw.result);
+      formattedData.push(cursor)
       return formattedData;
     }
     else{
@@ -41,8 +41,11 @@ const getWalletTransactions = async (address, chain) => {
         limit: pagesize || 100,
         order: "DESC",
       });
-      cursor = response.pagination.cursor;
+      cursor = response.raw.cursor;
+      cursor = {cursor:cursor}
       formattedData = moralisSerializer(response.raw.result);
+      formattedData.push(cursor)
+      console.log("formattedData",formattedData)
       return formattedData;
     }
 
