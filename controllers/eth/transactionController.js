@@ -18,6 +18,7 @@ const getTransactions = async (req, res) => {
     const { address, chain } = req.params;
     let formattedChain = chain.toUpperCase();
     console.log("formattedChain", formattedChain);
+    let cursor = null;
     const transactions = await getWalletTransactions(
       address,
       cursor,
