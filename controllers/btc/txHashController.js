@@ -7,11 +7,11 @@ const getTxHashDetails = async (req, res) => {
   
   try {
     const transactionDetails = await fetchTransactionDetails(txhash);
-    const processGraphData = processGraphData(transactionDetails, transactionDetails[0].from_address, "BTC");
+    const GraphData = processGraphData(transactionDetails, transactionDetails[0].from_address, "BTC");
     res.json({
       results: {
         transaction: transactionDetails,
-        graphdata: processGraphData,
+        graphdata: GraphData,
       },
     });
   } catch (error) {
