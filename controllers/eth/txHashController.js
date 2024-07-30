@@ -1,5 +1,6 @@
 const {txHash} = require('../../services/blockchain/Bitcoin/btcChain/queryParams');
 const Moralis = require("moralis").default;
+const { processGraphData } = require("../../serializers/processGraphdata");
 
 
 const {moralisSerializer} = require('../../serializers/moralisSerializer');
@@ -33,7 +34,8 @@ const getTransactionDetails = async (req, res) => {
       console.log(response);
       if (response.raw) {
 
-        res.json(moralisSerializer(response.raw));
+        serialized = (moralisSerializer(response.raw));
+        graphdata = processGraphData(serialized, serialized[0].from_address, response.raw.chain);
         // res.json((response.raw));
       } else {
         res.status(404).send({ error: "Transaction not found" });
