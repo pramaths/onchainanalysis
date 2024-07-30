@@ -36,6 +36,12 @@ const getTransactionDetails = async (req, res) => {
 
         serialized = (moralisSerializer(response.raw));
         graphdata = processGraphData(serialized, serialized[0].from_address, response.raw.chain);
+        res.json({
+          results: {
+            transaction: serialized,
+            graphdata: graphdata,
+          },
+        });
         // res.json((response.raw));
       } else {
         res.status(404).send({ error: "Transaction not found" });
