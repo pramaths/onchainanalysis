@@ -11,9 +11,9 @@ function transformBitcoinTransaction(transaction, address) {
       console.log("No vin found in transaction:", transaction.txid);
       const tx = {
         block_hash: transaction.status.block_hash || "",
-        block_number: transaction.status.block_time || "",
+        block_number: transaction.status.block_height || "",
         block_timestamp: transaction.status.block_time
-          ? new Date(transaction.status.block_time).toISOString()
+          ? new Date(transaction.status.block_time*1000).toISOString()
           : "",
         from_address: transaction.prevout.scriptpubkey_address,
         to_address: address,
