@@ -12,9 +12,7 @@ function transformBitcoinTransaction(transaction, address) {
       const tx = {
         block_hash: transaction.status.block_hash || "",
         block_number: transaction.status.block_height || "",
-        block_timestamp: transaction.status.block_time
-          ? new Date(transaction.status.block_time*1000).toISOString()
-          : "",
+        block_timestamp: new Date(transaction.status.block_time*1000).toISOString(),
         from_address: transaction.prevout.scriptpubkey_address,
         to_address: address,
         value: transaction.vout[0].value / SATOSHI_PER_BITCOIN || "",
@@ -32,9 +30,7 @@ function transformBitcoinTransaction(transaction, address) {
         const tx = {
           block_hash: transaction.status.block_hash || "",
           block_number: transaction.status.block_height || "",
-          block_timestamp: transaction.status.block_time
-            ? new Date(transaction.status.block_time).toISOString()
-            : "",
+          block_timestamp: new Date(transaction.status.block_time).toISOString(),
           from_address: input.prevout.scriptpubkey_address  || "",
           to_address: address ,
           value: input.prevout.value / SATOSHI_PER_BITCOIN|| "",
@@ -57,9 +53,8 @@ function transformBitcoinTransaction(transaction, address) {
             const tx = {
               block_hash: transaction.status.block_hash || "",
               block_number: transaction.status.block_height || "",
-              block_timestamp: transaction.status.block_time
-                ? new Date(transaction.status.block_time).toISOString()
-                : "",
+              block_timestamp: new Date(transaction.status.block_time).toISOString()
+    ,
               from_address: input.prevout.scriptpubkey_address || "",
               to_address: output.scriptpubkey_address || "",
               value: output.value / SATOSHI_PER_BITCOIN || "",
