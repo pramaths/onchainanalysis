@@ -9,7 +9,7 @@ const {
 } = require("../../services/common/aggregationService");
 const { identifyEVMchain } = require("../../utils/identifyBlockchain");
 
-const MAX_LAYERS = 5;
+const MAX_LAYERS = 7;
 const MAX_TRANSACTIONS = 100;
 const THRESHOLD = 1;
 

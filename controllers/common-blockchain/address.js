@@ -7,6 +7,9 @@ const addressController = async (req, res) => {
         console.log('address:', address);
         console.log('chain:', chain);
        let formattedChain = chain.toUpperCase();
+       if(formattedChain === "MATIC"){
+              formattedChain = "POLYGON";
+       }
         const addressDetails = await fetchaddressDetails(address, formattedChain);
         res.status(200).json(addressDetails);
     } catch (error) {
