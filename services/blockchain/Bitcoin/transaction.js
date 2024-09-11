@@ -30,7 +30,6 @@ async function getAllTransactionsController(req, res) {
     }
 
 
-    // Convert the map to arrays for the API response
     const rawTransactions = transactions.flatMap(tx => transformBitcoinTransaction(tx, address));
     console.log("Raw Transactions:", rawTransactions);
     const aggregatedTransactions = aggregateTransactions(rawTransactions, address);
