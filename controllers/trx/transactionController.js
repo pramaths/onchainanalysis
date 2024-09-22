@@ -130,7 +130,6 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
       message: `Processing layer ${currentLayer + 1}, address: ${address}`,
     });
   
-    let cursor = null;
     let totalTransactions = 0;
     const uniqueAddresses = new Set();
   
@@ -140,15 +139,14 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
       );
       if (transactions.length === 0) break;
     
-      const transformedTransactions = transactions.slice(0,-1);
       const aggregatedTransactions = aggregateTransactions(
-        transformedTransactions,
+        transactions,
         address
       );
   
       const filteredTransactions = aggregatedTransactions.filter((tx) => {
   
-        return tx.value >= 1e18 ;
+        return tx.value >= 100 ;
       });
       const formattedChain = 'TRON';
 
@@ -209,7 +207,7 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
     );
   
     const processAddress = async (address) => {
-      const transactions = await getWalletTransactions(
+      const transactions = await getNormalTransactions(
         address
       );
       const transformedTransactions = transactions.slice(0,-1);
@@ -220,7 +218,7 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
       const chain = 'tron';
       const formattedChain = chain.toUpperCase();
       const filteredTransactions = aggregatedTransactions.filter((tx) => {
-        return tx.value >= 1e18 ;
+        return tx.value >= 100 ;
       });
       const graphData = processGraphData(
         filteredTransactions,

@@ -3,7 +3,7 @@ const { Graph } = require('redis');
 const { aggregateTransactions } = require('./services/common/aggregationService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-const address = 'TNkcBq326NQj8kN4BpZEGuB87mG9UJwtvV';
+const address = 'TJGd9GErpVFSuyAhsi5MJ8bGXU6HzaMrWG';
 const eventSource = new EventSource(`http://localhost:8000/api/trx/stream/transactions/${address}`);
 
 // Initialize CSV writer
@@ -17,45 +17,42 @@ const csvWriter = createCsvWriter({
     { id: 'totalProcessed', title: 'TOTAL_PROCESSED' },
     { id: 'GraphData', title: 'GRAPH_DATA' },
     { id: 'aggregatedTransactions', title: 'AGGREGATED_TRANSACTIONS' },
-    { id: 'txid', title: 'TXID' } // Added to match the `logEntry`
   ]
 });
 
-// Event handling for transactions
 eventSource.onmessage = function(event) {
   const data = JSON.parse(event.data);
-
+  
   if (data.type === 'transactions') {
     console.log(`Processing transactions for layer ${data.layerNumber}`);
-
-    const transactions = data.aggregateTransactions.map((transaction, index) => {
-      if (index === 0) {
-        console.log('First transaction in batch:', JSON.stringify(transaction, null, 2));
-      }
-      console.log(transactions)
-      return {
+    console.log(JSON.stringify(data))
+    data.aggregateTransactions.forEach((transaction, index) => {
+      const logEntry = {
         layer: data.layerNumber,
         from_address: transaction.from_address,
         to_address: transaction.to_address,
         value: transaction.value / 100000000, 
         txid: transaction.txid,
         totalProcessed: data.totalProcessed,
-        GraphData: JSON.stringify(data.graphData),
-        aggregatedTransactions: JSON.stringify(data.aggregatedTransactions)
+        GraphData:JSON.stringify(data.graphData),
+        aggregatedTransactions:JSON.stringify(data.aggregatedTransactions)
       };
+      console.log(data.graphData)
+
+      if (index === 0) {
+        console.log('First transaction in batch:', JSON.stringify(transaction, null, 2));
+      }
+      
+      // Write the log entry to the CSV file
+      csvWriter.writeRecords([logEntry])
+        .then(() => console.log('Transaction log entry written to CSV file.'))
+        .catch(err => console.error('Error writing to CSV:', err));
     });
-
-    // Batch write to CSV
-    csvWriter.writeRecords(transactions)
-      .then(() => console.log('Transaction log entries written to CSV file.'))
-      .catch(err => console.error('Error writing to CSV:', err));
-
   } else if (data.type === 'info' || data.type === 'error') {
     console.log(`${data.type.toUpperCase()}: ${data.message}`);
   }
 };
 
-// Event handling for errors
 eventSource.onerror = function(error) {
   console.error('EventSource failed:', error);
   if (error.status) {
@@ -67,17 +64,15 @@ eventSource.onerror = function(error) {
   eventSource.close();
 };
 
-// Event handling for connection open
 eventSource.onopen = function() {
   console.log("Connection to server opened.");
 };
 
-// Handle custom 'close' event sent from server
+// Add a listener for the 'end' event type which should be sent by the server
 eventSource.addEventListener('close', function() {
   console.log('End of data stream.');
-  eventSource.close();
+  eventSource.close(); // Close the connection after receiving 'end' event
 });
-
 
 
 // const apiKey = '9788928a-bbdb-44b7-96d7-0ba1198200d1';

@@ -22,7 +22,6 @@ async function getNormalTransactions(address) {
   try {
     const url = getNormalTransactionUrl(address);
     const response = await client.get(url);
-    console.log("response",response.data);
     const formattedData = tronChainSerializer(response.data);
     return formattedData;
   } catch (error) {

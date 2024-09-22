@@ -6,7 +6,7 @@ function tronChainSerializer(data){
             block_hash: item.hash,
             from_address: item.from,
             to_address: item.to,
-            value: item.amount,
+            value: item.amount / 1e6,
             timestamp: new Date(item.block_timestamp * 1000),
             nonce: item.nonce,
             blockNumber: item.block,
