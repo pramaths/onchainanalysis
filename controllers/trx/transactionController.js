@@ -12,9 +12,8 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
   
   const getTransactions = async (req, res) => {
     try {
-      const { address, chain } = req.params;
-      let formattedChain = chain.toUpperCase();
-      console.log("formattedChain", formattedChain);
+      const { address } = req.params;
+      let formattedChain = 'TRON';
       const transactions = await getNormalTransactions(
         address
       );
@@ -34,6 +33,8 @@ const {getNormalTransactions} = require("../../services/blockchain/Tron/endpoint
         .send({ error: "An error occurred while fetching transactions" });
     }
   };
+
+
   const getOutgoingTransactions = async (req, res) => {
     try {
       const { address, chain } = req.params;
