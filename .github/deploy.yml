@@ -1,0 +1,39 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Trigger Vercel Deployment with Retry
+        run: |
+          retry() {
+            local max_attempts=$1
+            local attempt=1
+            local sleep_time=5
+
+            while [ $attempt -le $max_attempts ]; do
+              echo "Attempt $attempt: Triggering Vercel deployment..."
+              
+              curl -X GET https://api.vercel.com/v1/integrations/deploy/prj_dftGUebOdD1bUElVEqdJTFFYMJHc/vJPkXxhRkr && break
+
+              echo "Attempt $attempt failed! Retrying in $sleep_time seconds..."
+              attempt=$((attempt + 1))
+              sleep $sleep_time
+              sleep_time=$((sleep_time * 2)) # Exponential backoff
+            done
+
+            if [ $attempt -gt $max_attempts ]; then
+              echo "Deployment failed after $max_attempts attempts."
+              exit 1
+            fi
+          }
+
+          retry 5
